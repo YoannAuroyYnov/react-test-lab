@@ -1,7 +1,15 @@
-const { useState } = require("react");
+import { useState } from "react";
+import {
+  validateName,
+  validateIndentity,
+  validateEmail,
+  validateAge,
+  validateZipCode,
+  validateCity,
+} from "../utils/validator";
 
 export const UserForm = () => {
-  let disabled = true;
+  const [disabled, setDisabled] = useState(true);
 
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
@@ -17,16 +25,95 @@ export const UserForm = () => {
   const [cityError, setCityError] = useState("");
   const [zipcodeError, setZipcodeError] = useState("");
 
+  const handleChangeFirstname = (e) => {
+    const { value } = e.target;
+
+    setFirstname(value);
+
+    try {
+      const isValid = validateName(value);
+      setFirstnameError("");
+    } catch (error) {
+      setFirstnameError(error.message);
+
+      return;
+    }
+  };
+
+  const handleChangeLastName = (e) => {
+    const { value } = e.target;
+
+    setLastname(value);
+    try {
+      const isValid = validateName(value);
+      setLastnameError("");
+    } catch (error) {
+      setLastnameError(error.message);
+
+      return;
+    }
+  };
+
+  const handleChangeEmail = (e) => {
+    const { value } = e.target;
+
+    setEmail(value);
+    try {
+      const isValid = validateEmail({ email: value });
+      setEmailError("");
+    } catch (error) {
+      setEmailError(error.message);
+    }
+  };
+
+  const handleChangeBirthdate = (e) => {
+    const { value } = e.target;
+
+    setBirthdate(value);
+    try {
+      const isValid = validateAge({ birth: new Date(value) });
+      setBirthdateError("");
+    } catch (error) {
+      setBirthdateError(error.message);
+    }
+  };
+
+  const handleChangeCity = (e) => {
+    const { value } = e.target;
+
+    setCity(value);
+  };
+
+  const handleChangeZipcode = (e) => {
+    const { value } = e.target;
+
+    setZipcode(value);
+    try {
+      const isValid = validateZipCode({ zipCode: value });
+      setZipcodeError("");
+    } catch (error) {
+      setZipcodeError(error.message);
+    }
+  };
+
+
+  const requiredIndicator = (
+    <span className="required-indicator" aria-hidden="true">
+      *
+    </span>
+  );
+
   return (
     <form>
       <div className="form-container">
         <div className="input-container">
           <label className="label" htmlFor="firstname">
-            Prénom
+            Prénom {requiredIndicator}
           </label>
           <input
+            required
             value={firstname}
-            onChange={(e) => setFirstname(e.target.value)}
+            onChange={handleChangeFirstname}
             className="input"
             id="firstname"
             type="text"
@@ -35,11 +122,12 @@ export const UserForm = () => {
         </div>
         <div className="input-container">
           <label className="label" htmlFor="lastname">
-            Nom
+            Nom {requiredIndicator}
           </label>
           <input
+            required
             value={lastname}
-            onChange={(e) => setLastname(e.target.value)}
+            onChange={handleChangeLastName}
             className="input"
             id="lastname"
             type="text"
@@ -48,11 +136,12 @@ export const UserForm = () => {
         </div>
         <div className="input-container">
           <label className="label" htmlFor="email">
-            Email
+            Email {requiredIndicator}
           </label>
           <input
+            required
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleChangeEmail}
             className="input"
             id="email"
             type="email"
@@ -61,11 +150,12 @@ export const UserForm = () => {
         </div>
         <div className="input-container">
           <label className="label" htmlFor="birthdate">
-            Date de naissance
+            Date de naissance {requiredIndicator}
           </label>
           <input
+            required
             value={birthdate}
-            onChange={(e) => setBirthdate(e.target.value)}
+            onChange={handleChangeBirthdate}
             className="input"
             id="birthdate"
             type="date"
@@ -78,7 +168,7 @@ export const UserForm = () => {
           </label>
           <input
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={handleChangeCity}
             className="input"
             id="city"
             type="text"
@@ -87,11 +177,12 @@ export const UserForm = () => {
         </div>
         <div className="input-container">
           <label className="label" htmlFor="zipcode">
-            Code postal
+            Code postal {requiredIndicator}
           </label>
           <input
+            required
             value={zipcode}
-            onChange={(e) => setZipcode(e.target.value)}
+            onChange={handleChangeZipcode}
             className="input"
             id="zipcode"
             type="text"

@@ -89,3 +89,8 @@
   margin: 0;
   height: fit-content;
 }
+
+.required-indicator {
+  font-size: 0.7rem;
+  margin-left: 4px;
+}
