@@ -10,6 +10,13 @@ export const UserForm = () => {
   const [city, setCity] = useState("");
   const [zipcode, setZipcode] = useState("");
 
+  const [firstnameError, setFirstnameError] = useState("");
+  const [lastnameError, setLastnameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [birthdateError, setBirthdateError] = useState("");
+  const [cityError, setCityError] = useState("");
+  const [zipcodeError, setZipcodeError] = useState("");
+
   return (
     <form>
       <div className="form-container">
@@ -24,6 +31,7 @@ export const UserForm = () => {
             id="firstname"
             type="text"
           />
+          <p className="error-text">{firstnameError}</p>
         </div>
         <div className="input-container">
           <label className="label" htmlFor="lastname">
@@ -36,6 +44,7 @@ export const UserForm = () => {
             id="lastname"
             type="text"
           />
+          <p className="error-text">{lastnameError}</p>
         </div>
         <div className="input-container">
           <label className="label" htmlFor="email">
@@ -48,6 +57,7 @@ export const UserForm = () => {
             id="email"
             type="email"
           />
+          <p className="error-text">{emailError}</p>
         </div>
         <div className="input-container">
           <label className="label" htmlFor="birthdate">
@@ -60,6 +70,7 @@ export const UserForm = () => {
             id="birthdate"
             type="date"
           />
+          <p className="error-text">{birthdateError}</p>
         </div>
         <div className="input-container">
           <label className="label" htmlFor="city">
@@ -72,6 +83,7 @@ export const UserForm = () => {
             id="city"
             type="text"
           />
+          <p className="error-text">{cityError}</p>
         </div>
         <div className="input-container">
           <label className="label" htmlFor="zipcode">
@@ -84,6 +96,7 @@ export const UserForm = () => {
             id="zipcode"
             type="text"
           />
+          <p className="error-text">{zipcodeError}</p>
         </div>
         <button
           className={`button submit-button ${disabled && "disabled"}`}

@@ -50,21 +50,42 @@
 }
 
 .input-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  display: grid;
+  grid-template-areas:
+    "label input"
+    "error error";
+  grid-template-columns: 1fr 2fr;
+  row-gap: 4px;
+  column-gap: 16px;
   margin: 10px 0;
   width: 100%;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .label {
+  grid-area: label;
+  justify-self: start;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .input {
-  flex: 1;
-  max-width: 250px;
+  grid-area: input;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
   padding: 10px;
   font-size: 1rem;
-  border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.error-text {
+  grid-area: error;
+  display: flex;
+  justify-content: center;
+  color: red;
+  font-size: 1rem;
+  margin: 0;
+  height: fit-content;
 }
