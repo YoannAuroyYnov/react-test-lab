@@ -2,6 +2,7 @@ import {
   validateAge,
   validateZipCode,
   validateIndentity,
+  validateName,
   validateEmail,
 } from "./validator.js";
 
@@ -36,8 +37,10 @@ describe("validateAge", () => {
     expect(validateAge(adultPerson)).toBe(true);
   });
 
-  it("should return false for an underage person", () => {
-    expect(validateAge(underagePerson)).toBe(false);
+  it("should throw an error for an underage person", () => {
+    expect(() => validateAge(underagePerson)).toThrow(
+      "Vous devez être majeur pour vous inscrire",
+    );
   });
 
   it("should throw a 'missing param' error", () => {
@@ -109,31 +112,49 @@ describe("validateZipCode", () => {
     { zipCode: "97800" },
     { zipCode: "97900" },
   ])("invalid zip code", (zipObj) => {
-    it(`should return false for ${zipObj.zipCode}`, () => {
-      expect(validateZipCode(zipObj)).toBe(false);
+    it(`should throw an error for ${zipObj.zipCode}`, () => {
+      expect(() => validateZipCode(zipObj)).toThrow(
+        "Le code postal n'est pas valide",
+      );
     });
   });
 
-  describe.each([
-    () => validateZipCode(),
-    () => validateZipCode({ name: "John", age: 30 }),
-    () => validateZipCode({ zipCode: null }),
-    () => validateZipCode({ zipCode: undefined }),
-  ])("missing param", (testCase) => {
+  describe.each([() => validateZipCode()])("missing param", (testCase) => {
     it(`should throw a 'missing param' error`, () => {
       expect(() => testCase()).toThrow("missing param");
     });
   });
 
   describe.each([
-    () => validateZipCode({ zipCode: 75001 }),
-    () => validateZipCode({ zipCode: "9300" }),
-    () => validateZipCode({ zipCode: "930000" }),
-  ])("bad param", (testCase) => {
-    it(`should throw a 'bad param' error`, () => {
-      expect(() => testCase()).toThrow("bad param");
+    () => validateZipCode({ zipCode: null }),
+    () => validateZipCode({ zipCode: undefined }),
+    () => validateZipCode({ name: "John", age: 30 }),
+  ])("empty zip code", (testCase) => {
+    it(`should throw a 'Le code postal ne peut pas être vide' error`, () => {
+      expect(() => testCase()).toThrow("Le code postal ne peut pas être vide");
     });
   });
+
+  describe.each([
+    { zipCode: "9300" },
+    { zipCode: "123456" },
+    { zipCode: "930000" },
+  ])("invalid zip code format", (zipObj) => {
+    it(`should throw a 'invalid param' error for ${zipObj.zipCode}`, () => {
+      expect(() => validateZipCode(zipObj)).toThrow(
+        "Le code postal doit comporter 5 chiffres",
+      );
+    });
+  });
+
+  describe.each([() => validateZipCode({ zipCode: 75001 })])(
+    "bad param",
+    (testCase) => {
+      it(`should throw a 'bad param' error`, () => {
+        expect(() => testCase()).toThrow("bad param");
+      });
+    },
+  );
 });
 
 /**
@@ -171,9 +192,11 @@ describe("validateIndentity", () => {
     { firstname: "Tom@sql", lastname: "Dupuis" },
     { firstname: "Lisa[inject]", lastname: "Laurent" },
     { firstname: "Marc{xss}", lastname: "Renard" },
-  ])("invalid identity", (identity) => {
-    it(`should return false for ${identity.firstname} ${identity.lastname}`, () => {
-      expect(validateIndentity(identity)).toBe(false);
+  ])("invalid carac", (identity) => {
+    it(`should throw a invalid carac error for ${identity.firstname} ${identity.lastname}`, () => {
+      expect(() => validateIndentity(identity)).toThrow(
+        "Les caractères spéciaux sont interdits",
+      );
     });
   });
 
@@ -199,6 +222,65 @@ describe("validateIndentity", () => {
   ])("bad param", (identity, index) => {
     it(`should throw a 'bad param' error for case ${index}`, () => {
       expect(() => identity()).toThrow("bad param");
+    });
+  });
+});
+
+/**
+ * Test suite for validateName function
+ *
+ * Tests name validation logic:
+ * - Accepts letters (including accents), spaces, hyphens
+ * - Rejects digits and special characters
+ * - Error handling for empty string, missing/bad parameters
+ *
+ * @function validateName
+ * @see {@link ./validator.js}
+ */
+
+describe("validateName", () => {
+  describe.each([
+    "Pierre",
+    "Franck",
+    "Maria",
+    "Noël",
+    "Jean Dupont",
+    "Anne-Marie",
+    "Élise",
+  ])("valid name", (name) => {
+    it(`should return true for ${name}`, () => {
+      expect(validateName(name)).toBe(true);
+    });
+  });
+
+  describe.each([
+    "Jhon_random",
+    "Jean<script>",
+    "Paul:hack",
+    "Luc/admin",
+    "Anne\\root",
+    "Tom@sql",
+    "Lisa[inject]",
+    "Marc{xss}",
+  ])("invalid name", (name) => {
+    it(`should throw an error for ${name}`, () => {
+      expect(() => validateName(name)).toThrow(
+        "Les caractères spéciaux sont interdits",
+      );
+    });
+  });
+
+  describe.each(["Rob3rt", "12345"])("name with digits", (name) => {
+    it(`should throw an error for ${name}`, () => {
+      expect(() => validateName(name)).toThrow("Les chiffres sont interdits");
+    });
+  });
+
+  describe.each(["", null, undefined])("empty or null name", (name) => {
+    it(`should throw an error for ${name}`, () => {
+      expect(() => validateName(name)).toThrow(
+        "Le champ ne peut pas être vide",
+      );
     });
   });
 });
@@ -249,19 +331,29 @@ describe("validateEmail", () => {
     { email: "@domain.com" },
   ])("invalid email", (emailCase) => {
     it(`should return false for ${emailCase.email}`, () => {
-      expect(validateEmail(emailCase)).toBe(false);
+      expect(() => validateEmail(emailCase)).toThrow(
+        "Le format de l'email est invalide",
+      );
     });
   });
 
+  describe.each([() => validateEmail(), () => validateEmail(true)])(
+    "missing param",
+    (testCase) => {
+      it(`should throw a 'missing param' error`, () => {
+        expect(() => testCase()).toThrow("missing param");
+      });
+    },
+  );
+
   describe.each([
-    () => validateEmail(),
-    () => validateEmail(true),
     () => validateEmail({}),
+    () => validateEmail({ email: "" }),
     () => validateEmail({ email: null }),
     () => validateEmail({ email: undefined }),
-  ])("missing param", (testCase) => {
-    it(`should throw a 'missing param' error`, () => {
-      expect(() => testCase()).toThrow("missing param");
+  ])("empty email", (testCase) => {
+    it(`should throw a 'L'email ne peut pas être vide' error`, () => {
+      expect(() => testCase()).toThrow("L'email ne peut pas être vide");
     });
   });
 

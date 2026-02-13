@@ -13,6 +13,7 @@ import { calculateAge } from "./module";
 export function validateAge(p) {
   const age = calculateAge(p);
   const isAdult = Boolean(age >= 18);
+  if (!isAdult) throw new Error("Vous devez être majeur pour vous inscrire");
 
   return isAdult;
 }
@@ -27,34 +28,62 @@ export function validateAge(p) {
  * @throws {Error} "bad param"
  */
 export function validateZipCode(p) {
-  if (!p || !(p instanceof Object) || !p.zipCode)
-    throw new Error("missing param");
+  if (!p || !(p instanceof Object)) throw new Error("missing param");
+
+  if (!p.zipCode || p.zipCode.length === 0)
+    throw new Error("Le code postal ne peut pas être vide");
 
   const { zipCode } = p;
   const basicZipCodeRegexp = /^[0-9]{5}$/;
-  if (
-    typeof zipCode !== "string" ||
-    zipCode.length !== 5 ||
-    !basicZipCodeRegexp.test(zipCode)
-  )
-    throw new Error("bad param");
+  if (typeof zipCode !== "string") throw new Error("bad param");
+
+  if (zipCode.length !== 5 || !basicZipCodeRegexp.test(zipCode))
+    throw new Error("Le code postal doit comporter 5 chiffres");
 
   const isValidGenericZipCodeRegexp =
     /^(0[1-9]|[1-6]\d|7[0-4]|7[6-9]|8\d|9[0-5])\d{3}|97[1-4]\d{2}|976\d{2}|7500[1-9]|7501\d|75020$/;
-  const isValid = isValidGenericZipCodeRegexp.test(zipCode);
+  if (isValidGenericZipCodeRegexp.test(zipCode)) return true;
+  else throw new Error("Le code postal n'est pas valide");
+}
 
-  return isValid;
+/**
+ * Validates a single name (firstname or lastname) against allowed pattern.
+ *
+ * @param {string} name The name to validate
+ * @returns {{valid: boolean, forbiddenChar?: string}} Object with valid status and optional forbidden character
+ */
+export function validateName(name) {
+  const validNameRegexp = /^[a-zA-ZÀ-ÿ\s'-]+$/;
+
+  if (!name || name.length === 0) {
+    throw new Error("Le champ ne peut pas être vide");
+  }
+
+  if (validNameRegexp.test(name)) {
+    return true;
+  }
+
+  if (/[0-9]/.test(name)) {
+    throw new Error("Les chiffres sont interdits");
+  }
+
+  if (/[_/!@#$€§£%+=^¨&*(),.?"`':;{}|<>[\]\\]/.test(name)) {
+    throw new Error("Les caractères spéciaux sont interdits");
+  }
+
+  throw new Error("Une erreur inconnue est survenue");
 }
 
 /**
  * Validates if the given first name and last name are valid.
  *
- * @param {object} p An object representing a person, implementing a firstName and a lastName
- * @param {string} p.firstName The first name to validate
- * @param {string} p.lastName The last name to validate
- * @return {boolean} true if the first name and last name are valid, false otherwise
- * @throws {Error} "missing param"
- * @throws {Error} "bad param"
+ * @param {object} p An object representing a person, implementing a firstname and/or a lastname
+ * @param {string} p.firstname The first name to validate (optional if lastname provided)
+ * @param {string} p.lastname The last name to validate (optional if firstname provided)
+ * @return {boolean} true if the provided name(s) are valid, false otherwise
+ * @throws {Error} "missing param" - if both firstname and lastname are missing
+ * @throws {Error} "bad param" - if firstname or lastname is not a string
+ * @throws {Error} with specific message about forbidden content (digits, special characters)
  */
 export function validateIndentity(p) {
   if (!p || !(p instanceof Object) || !p.firstname || !p.lastname)
@@ -64,9 +93,7 @@ export function validateIndentity(p) {
   if (typeof firstname !== "string" || typeof lastname !== "string")
     throw new Error("bad param");
 
-  const validNameRegexp = /^[a-zA-ZÀ-ÿ\s'-]+$/;
-  const isValid =
-    validNameRegexp.test(firstname) && validNameRegexp.test(lastname);
+  const isValid = validateName(firstname) && validateName(lastname);
 
   return isValid;
 }
@@ -81,15 +108,16 @@ export function validateIndentity(p) {
  * @throws {Error} "bad param"
  */
 export function validateEmail(p) {
-  if (!p || !(p instanceof Object) || !p.email)
-    throw new Error("missing param");
+  if (!p || !(p instanceof Object)) throw new Error("missing param");
+
+  if (!p.email || p.email.length === 0)
+    throw new Error("L'email ne peut pas être vide");
 
   const { email } = p;
   if (typeof email !== "string") throw new Error("bad param");
 
   const validEmailRegexp =
     /^[a-zA-Z0-9._+-]+@[a-zA-Z0-9]+([.-][a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$/;
-  const isValid = validEmailRegexp.test(email);
-
-  return isValid;
+  if (validEmailRegexp.test(email)) return true;
+  throw new Error("Le format de l'email est invalide");
 }
