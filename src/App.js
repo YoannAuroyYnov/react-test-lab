@@ -1,5 +1,7 @@
 import { useState } from "react";
 import logo from "./logo.svg";
+import { UserForm } from "./components/UserForm";
+import { Counter } from "./components/Counter";
 import "./App.css";
 
 function App() {
@@ -10,15 +12,8 @@ function App() {
   };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <button className="button" onClick={clickOnMe}>
-          Click me
-        </button>
-        <span className="counter" data-testid="count">
-          {count}
-        </span>
-      </header>
+      <Counter />
+      <UserForm />
     </div>
   );
 }
