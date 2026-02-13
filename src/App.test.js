@@ -1,8 +1,13 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "./App";
 
-test('renders learn react link', () => {
+test("check counter on click me button", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  const buttonElement = screen.getByText(/click me/i);
+  const counterElement = screen.getByTestId("count");
+  expect(counterElement).toHaveTextContent("0");
+
+  fireEvent.click(buttonElement);
+  expect(counterElement).toHaveTextContent("1");
 });
