@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  build_test:
-    name: 🏗️ Build and test on Node.js ${{ matrix.node_version }}
+  build:
+    name: 🏗️ Build on Node.js ${{ matrix.node_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,6 +40,31 @@ jobs:
           else
             echo "❌ Build failed"
           fi
+      - name: 🔧 Setup pages
+        id: pages
+        uses: actions/configure-pages@v3
+      - name: 📤 Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+
+  test:
+    name: 🧪 Test on Node.js ${{ matrix.node_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [24.x]
+    steps:
+      - name: 👯‍♂️ Clone repository
+        uses: actions/checkout@v4
+      - name: 🔧 Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node_version }}
+      - name: 🔐 Enable Corepack
+        run: corepack enable
+      - name: 📥 Install dependencies
+        run: pnpm install --frozen-lockfile
       - name: 🧪 Test
         id: test
         continue-on-error: true
@@ -57,14 +82,6 @@ jobs:
         uses: codecov/codecov-action@v5
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      - name: 🔧 Setup pages
-        id: pages
-        uses: actions/configure-pages@v3
-      - name: 📤 Upload artifact for deployment
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: build
-
   deploy:
     environment:
       name: github-pages
@@ -73,7 +90,7 @@ jobs:
     permissions:
       pages: write
       id-token: write
-    needs: build_test
+    needs: [build, test]
     steps:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
