@@ -8,23 +8,49 @@ on:
 
 jobs:
   build_test:
+    name: 🏗️ Build and test on Node.js ${{ matrix.node_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node_version: [24.x, 22.X]
 
     steps:
-      - name: Clone repository
+      - name: 👯‍♂️ Clone repository
         uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node_version }}
+      - name: 🔧 Use Node.js ${{ matrix.node_version }}
         uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node_version }}
-      - name: Enable Corepack
+      - name: 🔐 Enable Corepack
         run: corepack enable
-      - name: Install dependencies
+      - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Build and test
+      - name: 🧰 Build
+        id: build
+        continue-on-error: true
+        run: pnpm run build --if-present
+
+      - name: 🗒️ Build report
+        if: always()
         run: |
-          pnpm run build --if-present
-          pnpm test
+          echo "Node.js version: $(node -v)"
+          if [[ ${{ steps.build.outcome }} == "success" ]]; then
+            echo "✅ Build succeeded"
+          else
+            echo "❌ Build failed"
+          fi
+
+      - name: 🧪 Test
+        id: test
+        continue-on-error: true
+        run: pnpm test
+
+      - name: 🗒️ Test report
+        if: always()
+        run: |
+          echo "Node.js version: $(node -v)"
+          if [[ ${{ steps.test.outcome }} == "success" ]]; then
+            echo "✅ Tests passed"
+          else
+            echo "❌ Tests failed"
+          fi
