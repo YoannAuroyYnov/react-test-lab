@@ -1,0 +1,30 @@
+name: Build and test react application
+
+on: 
+  push: 
+    branches: [main]
+  pull_request: 
+    branches: [main]
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [24.x, 22.X]
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v5
+        with:
+          node_version: ${{ matrix.node_version }}
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build and test
+        run: |
+          pnpm run build --if-present
+          pnpm test
