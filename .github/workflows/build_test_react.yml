@@ -1,4 +1,4 @@
-name: Build and test react application
+name: Build, Test and Deploy React Application
 
 on:
   push:
@@ -29,7 +29,6 @@ jobs:
         id: build
         continue-on-error: true
         run: pnpm run build --if-present
-
       - name: 🗒️ Build report
         if: always()
         run: |
@@ -39,12 +38,10 @@ jobs:
           else
             echo "❌ Build failed"
           fi
-
       - name: 🧪 Test
         id: test
         continue-on-error: true
         run: pnpm test
-
       - name: 🗒️ Test report
         if: always()
         run: |
@@ -57,9 +54,21 @@ jobs:
       - name: 🔧 Setup pages
         id: pages
         uses: actions/configure-pages@v3
-
       - name: 📤 Upload artifact for deployment
         uses: actions/upload-pages-artifact@v3
         with:
           path: build
-          if-no-files-found: error
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    needs: build_test
+    steps:
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
