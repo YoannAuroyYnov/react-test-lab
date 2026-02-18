@@ -11,4 +11,6 @@ function App() {
   );
 }
 
+// test CI optimization setup
+
 export default App;
