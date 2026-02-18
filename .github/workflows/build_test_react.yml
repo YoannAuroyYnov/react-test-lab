@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [24.x, 22.X]
+        node_version: [24.x]
 
     steps:
       - name: 👯‍♂️ Clone repository
@@ -54,3 +54,12 @@ jobs:
           else
             echo "❌ Tests failed"
           fi
+      - name: 🔧 Setup pages
+        id: pages
+        uses: actions/configure-pages@v3
+
+      - name: 📤 Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build
+          if-no-files-found: error
