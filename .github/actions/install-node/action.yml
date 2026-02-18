@@ -1,0 +1,15 @@
+name: install-node
+description: Install dependencies for build and test jobs
+runs:
+  using: "composite"
+  steps:
+    - name: 🔧 Use Node.js 24.x
+      uses: actions/setup-node@v5
+      with:
+        node-version: 24.x
+    - name: 🔐 Enable Corepack
+      run: corepack enable
+      shell: bash
+    - name: 📥 Install dependencies
+      run: pnpm install --frozen-lockfile
+      shell: bash

@@ -17,14 +17,8 @@ jobs:
     steps:
       - name: 👯‍♂️ Clone repository
         uses: actions/checkout@v4
-      - name: 🔧 Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ matrix.node_version }}
-      - name: 🔐 Enable Corepack
-        run: corepack enable
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install Node.js 24.x and pnpm
+        uses: ./.github/actions/install-node
       - name: 📑 Generate JSDoc documentation
         run: pnpm jsdoc
       - name: 🧰 Build
@@ -57,14 +51,8 @@ jobs:
     steps:
       - name: 👯‍♂️ Clone repository
         uses: actions/checkout@v4
-      - name: 🔧 Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ matrix.node_version }}
-      - name: 🔐 Enable Corepack
-        run: corepack enable
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install Node.js 24.x and pnpm
+        uses: ./.github/actions/install-node
       - name: 🧪 Test
         id: test
         continue-on-error: true
