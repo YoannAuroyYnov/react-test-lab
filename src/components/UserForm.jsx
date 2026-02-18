@@ -54,7 +54,7 @@ export const UserForm = () => {
 
     setPerson({ ...person, email: value });
     try {
-      const isValid = validateEmail({ email: value });
+      validateEmail({ email: value });
       setPersonError({ ...person, email: "" });
     } catch (error) {
       setPersonError({ ...person, email: error.message });
@@ -66,7 +66,7 @@ export const UserForm = () => {
 
     setPerson({ ...person, birth: value });
     try {
-      const isValid = validateAge({ birth: new Date(value) });
+      validateAge({ birth: new Date(value) });
       setPersonError({ ...person, birth: "" });
     } catch (error) {
       setPersonError({ ...person, birth: error.message });
@@ -84,7 +84,7 @@ export const UserForm = () => {
 
     setPerson({ ...person, zipCode: value });
     try {
-      const isValid = validateZipCode({ zipCode: value });
+      validateZipCode({ zipCode: value });
       setPersonError({ ...person, zipCode: "" });
     } catch (error) {
       setPersonError({ ...person, zipCode: error.message });
@@ -113,13 +113,7 @@ export const UserForm = () => {
     } catch (error) {
       return setDisabled(true);
     }
-  }, [
-    person.firstname,
-    person.lastname,
-    person.birth,
-    person.email,
-    person.zipCode,
-  ]);
+  }, [person]);
 
   const onSubmit = (e) => {
     e.preventDefault();
