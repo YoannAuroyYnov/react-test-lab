@@ -66,3 +66,15 @@ La documentation sera générée dans `public/docs/` et accessible à `http://lo
 Le projet est automatiquement déployé sur GitHub Pages via GitHub Actions lors d'un push sur la branche `main`.
 
 URL de déploiement : https://yoannauroyynov.github.io/react-test-lab/
+
+## Configuration CI/CD - Note sur l'optimisation
+
+**⚠️ Important :** La configuration CI/CD actuelle (parallélisation des jobs, caching pnpm, etc.) est explorée à titre **éducatif**. Sur un projet de cette taille, ces optimisations ne sont **pas pertinentes** en pratique.
+
+**Raison :** Les temps incompressibles de démarrage des conteneurs Docker (cold start, allocation de ressources) sont bien supérieurs aux gains potentiels du caching (~30-60 secondes économisées vs ~10-30 secondes de démarrage). En d'autres termes, le surcoût du lancement des pods dépasse largement les bénéfices de l'optimisation.
+
+Cette exploration reste utile pour :
+
+- Comprendre les bonnes pratiques GitHub Actions
+- Mettre en place une architecture scalable pour des projets plus volumineux
+- Démontrer une approche professionnelle de la CI/CD
