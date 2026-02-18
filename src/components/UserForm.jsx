@@ -138,7 +138,6 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="firstname-input"
-            data-cy="firstname-input"
             required
             value={person.firstname}
             onChange={handleChangeFirstname}
@@ -156,7 +155,6 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="lastname-input"
-            data-cy="lastname-input"
             required
             value={person.lastname}
             onChange={handleChangeLastName}
@@ -174,7 +172,6 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="email-input"
-            data-cy="email-input"
             required
             value={person.email}
             onChange={handleChangeEmail}
@@ -192,7 +189,6 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="birth-input"
-            data-cy="birth-input"
             required
             value={person.birth}
             onChange={handleChangeBirthdate}
@@ -210,7 +206,6 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="city-input"
-            data-cy="city-input"
             value={person.city}
             onChange={handleChangeCity}
             className="input"
@@ -225,7 +220,6 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="zip-input"
-            data-cy="zip-input"
             required
             value={person.zipCode}
             onChange={handleChangeZipcode}
@@ -239,7 +233,6 @@ export const UserForm = () => {
         </div>
         <button
           data-testid="submit-button"
-          data-cy="submit-button"
           className={`button submit-button ${disabled && "disabled"}`}
           type="submit"
           onClick={onSubmit}
