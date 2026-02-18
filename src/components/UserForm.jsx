@@ -27,9 +27,9 @@ export const UserForm = () => {
     setPerson({ ...person, firstname: value });
     try {
       validateName(value);
-      setPersonError({ ...person, firstname: "" });
+      setPersonError({ ...personError, firstname: "" });
     } catch (error) {
-      setPersonError({ ...person, firstname: error.message });
+      setPersonError({ ...personError, firstname: error.message });
 
       return;
     }
@@ -41,9 +41,9 @@ export const UserForm = () => {
     setPerson({ ...person, lastname: value });
     try {
       validateName(value);
-      setPersonError({ ...person, lastname: "" });
+      setPersonError({ ...personError, lastname: "" });
     } catch (error) {
-      setPersonError({ ...person, lastname: error.message });
+      setPersonError({ ...personError, lastname: error.message });
 
       return;
     }
@@ -55,9 +55,9 @@ export const UserForm = () => {
     setPerson({ ...person, email: value });
     try {
       validateEmail({ email: value });
-      setPersonError({ ...person, email: "" });
+      setPersonError({ ...personError, email: "" });
     } catch (error) {
-      setPersonError({ ...person, email: error.message });
+      setPersonError({ ...personError, email: error.message });
     }
   };
 
@@ -67,9 +67,9 @@ export const UserForm = () => {
     setPerson({ ...person, birth: value });
     try {
       validateAge({ birth: new Date(value) });
-      setPersonError({ ...person, birth: "" });
+      setPersonError({ ...personError, birth: "" });
     } catch (error) {
-      setPersonError({ ...person, birth: error.message });
+      setPersonError({ ...personError, birth: error.message });
     }
   };
 
@@ -85,9 +85,9 @@ export const UserForm = () => {
     setPerson({ ...person, zipCode: value });
     try {
       validateZipCode({ zipCode: value });
-      setPersonError({ ...person, zipCode: "" });
+      setPersonError({ ...personError, zipCode: "" });
     } catch (error) {
-      setPersonError({ ...person, zipCode: error.message });
+      setPersonError({ ...personError, zipCode: error.message });
     }
   };
 
@@ -138,6 +138,7 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="firstname-input"
+            data-cy="firstname-input"
             required
             value={person.firstname}
             onChange={handleChangeFirstname}
@@ -155,6 +156,7 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="lastname-input"
+            data-cy="lastname-input"
             required
             value={person.lastname}
             onChange={handleChangeLastName}
@@ -172,6 +174,7 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="email-input"
+            data-cy="email-input"
             required
             value={person.email}
             onChange={handleChangeEmail}
@@ -189,6 +192,7 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="birth-input"
+            data-cy="birth-input"
             required
             value={person.birth}
             onChange={handleChangeBirthdate}
@@ -206,6 +210,7 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="city-input"
+            data-cy="city-input"
             value={person.city}
             onChange={handleChangeCity}
             className="input"
@@ -220,6 +225,7 @@ export const UserForm = () => {
           </label>
           <input
             data-testid="zip-input"
+            data-cy="zip-input"
             required
             value={person.zipCode}
             onChange={handleChangeZipcode}
@@ -233,6 +239,7 @@ export const UserForm = () => {
         </div>
         <button
           data-testid="submit-button"
+          data-cy="submit-button"
           className={`button submit-button ${disabled && "disabled"}`}
           type="submit"
           onClick={onSubmit}
