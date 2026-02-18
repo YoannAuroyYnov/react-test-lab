@@ -1,9 +1,9 @@
 name: Build and test react application
 
-on: 
-  push: 
+on:
+  push:
     branches: [main]
-  pull_request: 
+  pull_request:
     branches: [main]
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node_version }}
         uses: actions/setup-node@v5
         with:
-          node_version: ${{ matrix.node_version }}
+          node-version: ${{ matrix.node_version }}
       - name: Enable Corepack
         run: corepack enable
       - name: Install dependencies

@@ -6,19 +6,6 @@ import {
   validateEmail,
 } from "./validator.js";
 
-/**
- * Test suite for validateAge function
- *
- * Tests the age validation logic:
- * - Returns true for adults (18+)
- * - Returns false for minors (<18)
- * - Throws errors for invalid/missing parameters
- * - Throws error for future birth dates
- *
- * @function validateAge
- * @see {@link ./validator.js}
- */
-
 describe("validateAge", () => {
   let adultPerson;
   let underagePerson;
@@ -75,18 +62,6 @@ describe("validateAge", () => {
     expect(() => validateAge(futurePerson)).toThrow("not allowed");
   });
 });
-
-/**
- * Test suite for validateZipCode function
- *
- * Tests French postal code validation:
- * - Valid codes: Metropolitan (01-95), Corsica (20), Overseas (971-976)
- * - Invalid codes: 00, 96-99 ranges
- * - Error handling for missing/bad parameters
- *
- * @function validateZipCode
- * @see {@link ./validator.js}
- */
 
 describe("validateZipCode", () => {
   describe.each([
@@ -157,19 +132,6 @@ describe("validateZipCode", () => {
   );
 });
 
-/**
- * Test suite for validateIndentity function
- *
- * Tests identity validation (first name & last name):
- * - Accepts letters with accents (é, ù, ç, ö, ê, etc.)
- * - Rejects special characters: _ < > : ; / \ @ [ ] { }
- * - Rejects numeric characters
- * - Error handling for missing/bad parameters
- *
- * @function validateIndentity
- * @see {@link ./validator.js}
- */
-
 describe("validateIndentity", () => {
   describe.each([
     { firstname: "Pierre", lastname: "Dubois" },
@@ -226,18 +188,6 @@ describe("validateIndentity", () => {
   });
 });
 
-/**
- * Test suite for validateName function
- *
- * Tests name validation logic:
- * - Accepts letters (including accents), spaces, hyphens
- * - Rejects digits and special characters
- * - Error handling for empty string, missing/bad parameters
- *
- * @function validateName
- * @see {@link ./validator.js}
- */
-
 describe("validateName", () => {
   describe.each([
     "Pierre",
@@ -284,18 +234,6 @@ describe("validateName", () => {
     });
   });
 });
-
-/**
- * Test suite for validateEmail function
- *
- * Tests email validation following RFC 5322 standards:
- * - Valid: user@domain.com, user.name+tag@sub.domain.co.uk
- * - Rejects: missing @, spaces, invalid TLDs, SQL/XSS injection attempts
- * - Error handling for missing/bad parameters
- *
- * @function validateEmail
- * @see {@link ./validator.js}
- */
 
 describe("validateEmail", () => {
   describe.each([

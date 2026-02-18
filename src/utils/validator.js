@@ -50,7 +50,8 @@ export function validateZipCode(p) {
  * Validates a single name (firstname or lastname) against allowed pattern.
  *
  * @param {string} name The name to validate
- * @returns {{valid: boolean, forbiddenChar?: string}} Object with valid status and optional forbidden character
+ * @returns {boolean} true if the name is valid
+ * @throws {Error} with specific message about forbidden content (digits, special characters)
  */
 export function validateName(name) {
   const validNameRegexp = /^[a-zA-ZÀ-ÿ\s'-]+$/;

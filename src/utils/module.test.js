@@ -1,9 +1,5 @@
 import { calculateAge } from "./module.js";
 
-/**
- * @function calculateAge(p)
- */
-
 describe("calculateAge", () => {
   let people20yearsOld;
   let veryOldPerson;

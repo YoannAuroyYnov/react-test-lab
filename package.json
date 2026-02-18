@@ -15,6 +15,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "jsdoc": "jsdoc -c ./jsdoc.config.json -r -d ./docs",
     "test": "react-scripts test --coverage --collectCoverageFrom=!src/reportWebVitals.js --collectCoverageFrom=!src/index.js --watchAll=false",
     "eject": "react-scripts eject"
   },
@@ -37,6 +38,7 @@
     ]
   },
   "devDependencies": {
+    "jsdoc": "^4.0.5",
     "react-test-renderer": "^19.2.4"
   }
 }
