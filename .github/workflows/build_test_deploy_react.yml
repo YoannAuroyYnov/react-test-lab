@@ -33,7 +33,6 @@ jobs:
         run: pnpm jsdoc
       - name: 🧰 Build
         id: build
-        continue-on-error: true
         run: pnpm run build --if-present
       - name: 🗒️ Build report
         if: always()
@@ -67,7 +66,6 @@ jobs:
         uses: ./.github/actions/install-node
       - name: 🧪 Integration Tests
         id: int-test
-        continue-on-error: true
         run: pnpm test
       - name: 🗒️ Test report
         if: always()
@@ -99,7 +97,6 @@ jobs:
         run: pnpm exec cypress install
       - name: 🎭 Run e2e tests with Cypress
         id: e2e-test
-        continue-on-error: true
         uses: cypress-io/github-action@v6
         with:
           install: false
