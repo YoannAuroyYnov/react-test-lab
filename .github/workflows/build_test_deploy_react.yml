@@ -7,12 +7,22 @@ on:
     branches: [main]
 
 jobs:
+  setup:
+    name: 🛠️ Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: 👯‍♂️ Clone repository
+        uses: actions/checkout@v4
+      - name: Install Node.js 24.x and pnpm and cache pnpm store
+        uses: ./.github/actions/install-node
+
   build:
     name: 🏗️ Build on Node.js ${{ matrix.node_version }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node_version: [24.x]
+    needs: setup
 
     steps:
       - name: 👯‍♂️ Clone repository
@@ -48,6 +58,8 @@ jobs:
     strategy:
       matrix:
         node_version: [24.x]
+    needs: setup
+
     steps:
       - name: 👯‍♂️ Clone repository
         uses: actions/checkout@v4
