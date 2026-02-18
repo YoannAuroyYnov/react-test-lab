@@ -25,6 +25,8 @@ jobs:
         run: corepack enable
       - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: 📑 Generate JSDoc documentation
+        run: pnpm jsdoc
       - name: 🧰 Build
         id: build
         continue-on-error: true

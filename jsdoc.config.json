@@ -5,6 +5,6 @@
   },
   "opts": {
     "recurse": true,
-    "destination": "./docs"
+    "destination": "./public/docs"
   }
 }
