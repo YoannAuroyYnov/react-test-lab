@@ -24,9 +24,17 @@ export const UsersList = () => {
 
   const [, navigate] = useLocation();
 
+  const severalUsers = users.length > 1;
+  const noUser = users.length === 0;
+
   return (
     <div className="users-list-container">
-      <h3>Liste des 5 derniers utilisateurs enregistrés :</h3>
+      <h2 data-testid="users-counter">
+        {noUser
+          ? "Il n'y a aucun utilisateur enregistré"
+          : `Il y a ${users.length} utilisateur${severalUsers ? "s" : ""} enregistré${severalUsers ? "s" : ""}`}
+      </h2>
+      <h3>Liste des 5 derniers utilisateurs :</h3>
       <ul data-testid="users-list" className="list-none">
         {users.slice(-5).map((user, index) => (
           <li key={index} data-testid={`user-${index}`}>

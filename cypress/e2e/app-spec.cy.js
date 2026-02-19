@@ -22,6 +22,10 @@ describe("Home page spec", () => {
       });
     });
 
+    it("should count the number of registered users", () => {
+      cy.get("h2").should("have.text", "Il y a 2 utilisateurs enregistrés");
+    });
+
     it("should display the list of registered users", () => {
       cy.get("[data-testid=users-list]")
         .children()
@@ -109,6 +113,11 @@ describe("Home page spec", () => {
   context("when no users are registered", () => {
     beforeEach(() => {
       cy.visit("/react-test-lab/new-user");
+    });
+
+    it("should display a message when no users are registered", () => {
+      cy.visit("/react-test-lab");
+      cy.get("h2").should("have.text", "Il n'y a aucun utilisateur enregistré");
     });
 
     it("should register a new user", () => {

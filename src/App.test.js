@@ -13,14 +13,52 @@ test("renders welcome title on App", () => {
   expect(title).toBeInTheDocument();
 });
 
-// todo: add counter
-// test("renders a counter of subscribed users", () => {
-//   render(<App />);
+test("renders an empty counter when no users are registered", () => {
+  Object.defineProperty(window, "location", {
+    value: { pathname: "/react-test-lab" },
+    writable: true,
+  });
+  render(<App />);
 
-//   const counter = screen.getByTestId("users-counter");
-//   expect(counter).toBeInTheDocument();
-//   expect(counter).toHaveTextContent("Nombre d'utilisateurs inscrits : 0");
-// });
+  const counter = screen.getByTestId("users-counter");
+  expect(counter).toBeInTheDocument();
+  expect(counter).toHaveTextContent("Il n'y a aucun utilisateur enregistré");
+});
+
+test("renders a counter when a user is registered", () => {
+  Object.defineProperty(window, "location", {
+    value: { pathname: "/react-test-lab" },
+    writable: true,
+  });
+  localStorage.setItem(
+    "users",
+    JSON.stringify([{ firstname: "Alice", lastname: "Smith" }]),
+  );
+  render(<App />);
+
+  const counter = screen.getByTestId("users-counter");
+  expect(counter).toBeInTheDocument();
+  expect(counter).toHaveTextContent("Il y a 1 utilisateur enregistré");
+});
+
+test("renders a counter when several users are registered", () => {
+  Object.defineProperty(window, "location", {
+    value: { pathname: "/react-test-lab" },
+    writable: true,
+  });
+  localStorage.setItem(
+    "users",
+    JSON.stringify([
+      { firstname: "Alice", lastname: "Smith" },
+      { firstname: "Bob", lastname: "Johnson" },
+    ]),
+  );
+  render(<App />);
+
+  const counter = screen.getByTestId("users-counter");
+  expect(counter).toBeInTheDocument();
+  expect(counter).toHaveTextContent("Il y a 2 utilisateurs enregistrés");
+});
 
 test("displays UsersList component by default", () => {
   Object.defineProperty(window, "location", {
@@ -29,9 +67,7 @@ test("displays UsersList component by default", () => {
   });
   render(<App />);
 
-  const userListTitle = screen.getByText(
-    "Liste des 5 derniers utilisateurs enregistrés :",
-  );
+  const userListTitle = screen.getByText("Liste des 5 derniers utilisateurs :");
   expect(userListTitle).toBeInTheDocument();
 });
 
