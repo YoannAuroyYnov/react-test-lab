@@ -140,126 +140,129 @@ export const UserForm = () => {
   );
 
   return (
-    <form action="/" method="get">
-      <div className="form-container">
-        <div className="input-container">
-          <label className="label" htmlFor="firstname">
-            Prénom {requiredIndicator}
-          </label>
-          <input
-            data-testid="firstname-input"
-            required
-            value={person.firstname}
-            onChange={handleChangeFirstname}
-            className="input"
-            id="firstname"
-            type="text"
-          />
-          <p data-testid="firstname-error-text" className="error-text">
-            {personError.firstname}
-          </p>
+    <>
+      <h3 className="form-title">Enregistrer un nouvel utilisateur</h3>
+      <form action="/" method="get">
+        <div className="form-container">
+          <div className="input-container">
+            <label className="label" htmlFor="firstname">
+              Prénom {requiredIndicator}
+            </label>
+            <input
+              data-testid="firstname-input"
+              required
+              value={person.firstname}
+              onChange={handleChangeFirstname}
+              className="input"
+              id="firstname"
+              type="text"
+            />
+            <p data-testid="firstname-error-text" className="error-text">
+              {personError.firstname}
+            </p>
+          </div>
+          <div className="input-container">
+            <label className="label" htmlFor="lastname">
+              Nom {requiredIndicator}
+            </label>
+            <input
+              data-testid="lastname-input"
+              required
+              value={person.lastname}
+              onChange={handleChangeLastName}
+              className="input"
+              id="lastname"
+              type="text"
+            />
+            <p data-testid="lastname-error-text" className="error-text">
+              {personError.lastname}
+            </p>
+          </div>
+          <div className="input-container">
+            <label className="label" htmlFor="email">
+              Email {requiredIndicator}
+            </label>
+            <input
+              data-testid="email-input"
+              required
+              value={person.email}
+              onChange={handleChangeEmail}
+              className="input"
+              id="email"
+              type="email"
+            />
+            <p data-testid="email-error-text" className="error-text">
+              {personError.email}
+            </p>
+          </div>
+          <div className="input-container">
+            <label className="label" htmlFor="birthdate">
+              Date de naissance {requiredIndicator}
+            </label>
+            <input
+              data-testid="birth-input"
+              required
+              value={person.birth}
+              onChange={handleChangeBirthdate}
+              className="input"
+              id="birthdate"
+              type="date"
+            />
+            <p data-testid="birth-error-text" className="error-text">
+              {personError.birth}
+            </p>
+          </div>
+          <div className="input-container">
+            <label className="label" htmlFor="city">
+              Ville
+            </label>
+            <input
+              data-testid="city-input"
+              value={person.city}
+              onChange={handleChangeCity}
+              className="input"
+              id="city"
+              type="text"
+            />
+            <p className="error-text">{personError.city}</p>
+          </div>
+          <div className="input-container">
+            <label className="label" htmlFor="zipcode">
+              Code postal {requiredIndicator}
+            </label>
+            <input
+              data-testid="zip-input"
+              required
+              value={person.zipCode}
+              onChange={handleChangeZipcode}
+              className="input"
+              id="zipcode"
+              type="text"
+            />
+            <p data-testid="zip-error-text" className="error-text">
+              {personError.zipCode}
+            </p>
+          </div>
+          <div>
+            <button
+              data-testid="back-button"
+              className="button button-secondary"
+              onClick={() => navigate("/")}
+            >
+              Retour
+            </button>
+            <button
+              data-testid="submit-button"
+              className={`button submit-button ${disabled && "disabled"}`}
+              type="submit"
+              onClick={onSubmit}
+              disabled={disabled}
+            >
+              Enregistrer l'utilisateur
+            </button>
+          </div>
         </div>
-        <div className="input-container">
-          <label className="label" htmlFor="lastname">
-            Nom {requiredIndicator}
-          </label>
-          <input
-            data-testid="lastname-input"
-            required
-            value={person.lastname}
-            onChange={handleChangeLastName}
-            className="input"
-            id="lastname"
-            type="text"
-          />
-          <p data-testid="lastname-error-text" className="error-text">
-            {personError.lastname}
-          </p>
-        </div>
-        <div className="input-container">
-          <label className="label" htmlFor="email">
-            Email {requiredIndicator}
-          </label>
-          <input
-            data-testid="email-input"
-            required
-            value={person.email}
-            onChange={handleChangeEmail}
-            className="input"
-            id="email"
-            type="email"
-          />
-          <p data-testid="email-error-text" className="error-text">
-            {personError.email}
-          </p>
-        </div>
-        <div className="input-container">
-          <label className="label" htmlFor="birthdate">
-            Date de naissance {requiredIndicator}
-          </label>
-          <input
-            data-testid="birth-input"
-            required
-            value={person.birth}
-            onChange={handleChangeBirthdate}
-            className="input"
-            id="birthdate"
-            type="date"
-          />
-          <p data-testid="birth-error-text" className="error-text">
-            {personError.birth}
-          </p>
-        </div>
-        <div className="input-container">
-          <label className="label" htmlFor="city">
-            Ville
-          </label>
-          <input
-            data-testid="city-input"
-            value={person.city}
-            onChange={handleChangeCity}
-            className="input"
-            id="city"
-            type="text"
-          />
-          <p className="error-text">{personError.city}</p>
-        </div>
-        <div className="input-container">
-          <label className="label" htmlFor="zipcode">
-            Code postal {requiredIndicator}
-          </label>
-          <input
-            data-testid="zip-input"
-            required
-            value={person.zipCode}
-            onChange={handleChangeZipcode}
-            className="input"
-            id="zipcode"
-            type="text"
-          />
-          <p data-testid="zip-error-text" className="error-text">
-            {personError.zipCode}
-          </p>
-        </div>
-        <div>
-          <button
-            data-testid="back-button"
-            className="button button-secondary"
-            onClick={() => navigate("/")}
-          >
-            Retour
-          </button>
-          <button
-            data-testid="submit-button"
-            className={`button submit-button ${disabled && "disabled"}`}
-            type="submit"
-            onClick={onSubmit}
-            disabled={disabled}
-          >
-            Enregistrer l'utilisateur
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </>
   );
 };
