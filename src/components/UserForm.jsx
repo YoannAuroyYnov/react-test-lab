@@ -7,6 +7,7 @@ import {
   validateAge,
   validateZipCode,
 } from "../utils/validator";
+import { TextInput } from "./atomic/TextInput";
 
 const INITIAL_PERSON = {
   firstname: "",
@@ -24,73 +25,28 @@ export const UserForm = ({ setUsers }) => {
 
   const [, navigate] = useLocation();
 
-  const handleChangeFirstname = (e) => {
-    const { value } = e.target;
+  const handleChange = (field, value, validator = null) => {
+    setPerson({ ...person, [field]: value });
 
-    setPerson({ ...person, firstname: value });
-    try {
-      validateName(value);
-      setPersonError({ ...personError, firstname: "" });
-    } catch (error) {
-      setPersonError({ ...personError, firstname: error.message });
-
+    if (!validator) {
+      setPersonError({ ...personError, [field]: "" });
       return;
     }
-  };
 
-  const handleChangeLastName = (e) => {
-    const { value } = e.target;
-
-    setPerson({ ...person, lastname: value });
     try {
-      validateName(value);
-      setPersonError({ ...personError, lastname: "" });
+      const validateData =
+        field === "birth"
+          ? { birth: new Date(value) }
+          : field === "email"
+            ? { email: value }
+            : field === "zipCode"
+              ? { zipCode: value }
+              : value;
+
+      validator(validateData);
+      setPersonError({ ...personError, [field]: "" });
     } catch (error) {
-      setPersonError({ ...personError, lastname: error.message });
-
-      return;
-    }
-  };
-
-  const handleChangeEmail = (e) => {
-    const { value } = e.target;
-
-    setPerson({ ...person, email: value });
-    try {
-      validateEmail({ email: value });
-      setPersonError({ ...personError, email: "" });
-    } catch (error) {
-      setPersonError({ ...personError, email: error.message });
-    }
-  };
-
-  const handleChangeBirthdate = (e) => {
-    const { value } = e.target;
-
-    setPerson({ ...person, birth: value });
-    try {
-      validateAge({ birth: new Date(value) });
-      setPersonError({ ...personError, birth: "" });
-    } catch (error) {
-      setPersonError({ ...personError, birth: error.message });
-    }
-  };
-
-  const handleChangeCity = (e) => {
-    const { value } = e.target;
-
-    setPerson({ ...person, city: value });
-  };
-
-  const handleChangeZipcode = (e) => {
-    const { value } = e.target;
-
-    setPerson({ ...person, zipCode: value });
-    try {
-      validateZipCode({ zipCode: value });
-      setPersonError({ ...personError, zipCode: "" });
-    } catch (error) {
-      setPersonError({ ...personError, zipCode: error.message });
+      setPersonError({ ...personError, [field]: error.message });
     }
   };
 
@@ -143,105 +99,81 @@ export const UserForm = ({ setUsers }) => {
       <h3 className="form-title">Enregistrer un nouvel utilisateur</h3>
       <form action="/" method="get">
         <div className="form-container">
-          <div className="input-container">
-            <label className="label" htmlFor="firstname">
-              Prénom {requiredIndicator}
-            </label>
-            <input
-              data-testid="firstname-input"
-              required
-              value={person.firstname}
-              onChange={handleChangeFirstname}
-              className="input"
-              id="firstname"
-              type="text"
-            />
-            <p data-testid="firstname-error-text" className="error-text">
-              {personError.firstname}
-            </p>
-          </div>
-          <div className="input-container">
-            <label className="label" htmlFor="lastname">
-              Nom {requiredIndicator}
-            </label>
-            <input
-              data-testid="lastname-input"
-              required
-              value={person.lastname}
-              onChange={handleChangeLastName}
-              className="input"
-              id="lastname"
-              type="text"
-            />
-            <p data-testid="lastname-error-text" className="error-text">
-              {personError.lastname}
-            </p>
-          </div>
-          <div className="input-container">
-            <label className="label" htmlFor="email">
-              Email {requiredIndicator}
-            </label>
-            <input
-              data-testid="email-input"
-              required
-              value={person.email}
-              onChange={handleChangeEmail}
-              className="input"
-              id="email"
-              type="email"
-            />
-            <p data-testid="email-error-text" className="error-text">
-              {personError.email}
-            </p>
-          </div>
-          <div className="input-container">
-            <label className="label" htmlFor="birthdate">
-              Date de naissance {requiredIndicator}
-            </label>
-            <input
-              data-testid="birth-input"
-              required
-              value={person.birth}
-              onChange={handleChangeBirthdate}
-              className="input"
-              id="birthdate"
-              type="date"
-            />
-            <p data-testid="birth-error-text" className="error-text">
-              {personError.birth}
-            </p>
-          </div>
-          <div className="input-container">
-            <label className="label" htmlFor="city">
-              Ville
-            </label>
-            <input
-              data-testid="city-input"
-              value={person.city}
-              onChange={handleChangeCity}
-              className="input"
-              id="city"
-              type="text"
-            />
-            <p className="error-text">{personError.city}</p>
-          </div>
-          <div className="input-container">
-            <label className="label" htmlFor="zipcode">
-              Code postal {requiredIndicator}
-            </label>
-            <input
-              data-testid="zip-input"
-              required
-              value={person.zipCode}
-              onChange={handleChangeZipcode}
-              className="input"
-              id="zipcode"
-              type="text"
-            />
-            <p data-testid="zip-error-text" className="error-text">
-              {personError.zipCode}
-            </p>
-          </div>
+          <TextInput
+            label="Prénom"
+            id="firstname"
+            value={person.firstname}
+            onChange={(e) =>
+              handleChange("firstname", e.target.value, validateName)
+            }
+            testId="firstname-input"
+            errorTestId="firstname-error-text"
+            errorText={personError.firstname}
+            required
+            requiredIndicator={requiredIndicator}
+          />
+          <TextInput
+            label="Nom"
+            id="lastname"
+            type="text"
+            value={person.lastname}
+            onChange={(e) =>
+              handleChange("lastname", e.target.value, validateName)
+            }
+            testId="lastname-input"
+            errorTestId="lastname-error-text"
+            errorText={personError.lastname}
+            required
+            requiredIndicator={requiredIndicator}
+          />
+          <TextInput
+            label="Email"
+            id="email"
+            type="email"
+            value={person.email}
+            onChange={(e) =>
+              handleChange("email", e.target.value, validateEmail)
+            }
+            testId="email-input"
+            errorTestId="email-error-text"
+            errorText={personError.email}
+            required
+            requiredIndicator={requiredIndicator}
+          />
+          <TextInput
+            label="Date de naissance"
+            id="birthdate"
+            type="date"
+            value={person.birth}
+            onChange={(e) => handleChange("birth", e.target.value, validateAge)}
+            testId="birth-input"
+            errorTestId="birth-error-text"
+            errorText={personError.birth}
+            required
+            requiredIndicator={requiredIndicator}
+          />
+          <TextInput
+            label="Ville"
+            id="city"
+            value={person.city}
+            onChange={(e) => handleChange("city", e.target.value)}
+            testId="city-input"
+            errorTestId="city-error-text"
+            errorText={personError.city}
+          />
+          <TextInput
+            label="Code postal"
+            id="zipcode"
+            value={person.zipCode}
+            onChange={(e) =>
+              handleChange("zipCode", e.target.value, validateZipCode)
+            }
+            testId="zip-input"
+            errorTestId="zip-error-text"
+            errorText={personError.zipCode}
+            required
+            requiredIndicator={requiredIndicator}
+          />
           <div>
             <button
               data-testid="back-button"
