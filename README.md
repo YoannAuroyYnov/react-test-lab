@@ -43,13 +43,33 @@ Les fichiers optimisés seront générés dans le dossier `build/`.
 
 ## Exécuter les tests
 
-### Lancer tous les tests
+### Tests unitaires et d'intégration (Jest + Testing Library)
 
 ```bash
 pnpm test
 ```
 
 Le rapport de couverture sera disponible dans le dossier `coverage/`.
+
+### Tests end-to-end (Cypress)
+
+Dans un premier terminal, démarrez l'application :
+
+```bash
+pnpm start
+```
+
+Dans un second terminal, lancez Cypress en mode headless :
+
+```bash
+npx cypress run
+```
+
+Vous pouvez aussi utiliser l'interface graphique :
+
+```bash
+pnpm cypress
+```
 
 ## Documentation
 
