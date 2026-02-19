@@ -67,7 +67,9 @@ test("displays UsersList component by default", () => {
   });
   render(<App />);
 
-  const userListTitle = screen.getByText("Liste des 5 derniers utilisateurs :");
+  const userListTitle = screen.getByText(
+    "Créez en un pour voir la liste des utilisateurs enregistrés !",
+  );
   expect(userListTitle).toBeInTheDocument();
 });
 

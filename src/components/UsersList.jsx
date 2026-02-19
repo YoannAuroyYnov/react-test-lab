@@ -13,7 +13,11 @@ export const UsersList = ({ users }) => {
           ? "Il n'y a aucun utilisateur enregistré"
           : `Il y a ${users.length} utilisateur${severalUsers ? "s" : ""} enregistré${severalUsers ? "s" : ""}`}
       </h2>
-      <h3>Liste des 5 derniers utilisateurs :</h3>
+      <h3>
+        {users.length > 0
+          ? `Liste des 5 derniers utilisateurs :`
+          : "Créez en un pour voir la liste des utilisateurs enregistrés !"}
+      </h3>
       <ul data-testid="users-list" className="list-none">
         {users.slice(-5).map((user, index) => (
           <li key={index} data-testid={`user-${index}`}>
