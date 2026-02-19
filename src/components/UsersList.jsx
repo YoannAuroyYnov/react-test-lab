@@ -1,6 +1,25 @@
+import { useState, useEffect } from "react";
+
 export const UsersList = () => {
-  const stored = window.localStorage.getItem("users");
-  const users = stored ? JSON.parse(stored) : [];
+  const [users, setUsers] = useState(() => {
+    const stored = window.localStorage.getItem("users");
+    return stored ? JSON.parse(stored) : [];
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const stored = window.localStorage.getItem("users");
+      setUsers(stored ? JSON.parse(stored) : []);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("localStorageUpdate", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("localStorageUpdate", handleStorageChange);
+    };
+  }, []);
 
   return (
     <div className="users-list-container">

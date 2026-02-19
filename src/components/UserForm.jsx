@@ -124,6 +124,7 @@ export const UserForm = () => {
     usersArray.push(person);
 
     localStorage.setItem("users", JSON.stringify(usersArray));
+    window.dispatchEvent(new Event("localStorageUpdate"));
     setPerson(INITIAL_PERSON);
     setDisabled(true);
   };
