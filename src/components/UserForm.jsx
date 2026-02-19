@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import {
   validateName,
   validateIndentity,
@@ -20,6 +21,8 @@ export const UserForm = () => {
   const [disabled, setDisabled] = useState(true);
   const [person, setPerson] = useState(INITIAL_PERSON);
   const [personError, setPersonError] = useState(INITIAL_PERSON);
+
+  const [, navigate] = useLocation();
 
   const handleChangeFirstname = (e) => {
     const { value } = e.target;
@@ -127,6 +130,7 @@ export const UserForm = () => {
     window.dispatchEvent(new Event("localStorageUpdate"));
     setPerson(INITIAL_PERSON);
     setDisabled(true);
+    navigate("/react-test-lab");
   };
 
   const requiredIndicator = (
@@ -237,15 +241,24 @@ export const UserForm = () => {
             {personError.zipCode}
           </p>
         </div>
-        <button
-          data-testid="submit-button"
-          className={`button submit-button ${disabled && "disabled"}`}
-          type="submit"
-          onClick={onSubmit}
-          disabled={disabled}
-        >
-          Submit
-        </button>
+        <div>
+          <button
+            data-testid="back-button"
+            className="button button-secondary"
+            onClick={() => navigate("/react-test-lab")}
+          >
+            Retour
+          </button>
+          <button
+            data-testid="submit-button"
+            className={`button submit-button ${disabled && "disabled"}`}
+            type="submit"
+            onClick={onSubmit}
+            disabled={disabled}
+          >
+            Enregistrer l'utilisateur
+          </button>
+        </div>
       </div>
     </form>
   );

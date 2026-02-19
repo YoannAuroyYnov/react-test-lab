@@ -15,7 +15,7 @@ describe("Home page spec", () => {
     ];
 
     beforeEach(() => {
-      cy.visit("/", {
+      cy.visit("/react-test-lab", {
         onBeforeLoad(win) {
           win.localStorage.setItem("users", JSON.stringify(users));
         },
@@ -31,6 +31,8 @@ describe("Home page spec", () => {
     });
 
     it("should add a new user to the list after registration", () => {
+      cy.get("[data-testid=navigation-button]").click();
+
       cy.get("[data-testid=firstname-input]")
         .type(person.firstname)
         .should("have.value", person.firstname);
@@ -72,7 +74,7 @@ describe("Home page spec", () => {
         { firstname: "Frank", lastname: "Miller" },
       ];
 
-      cy.visit("/", {
+      cy.visit("/react-test-lab", {
         onBeforeLoad(win) {
           win.localStorage.setItem(
             "users",
@@ -106,7 +108,7 @@ describe("Home page spec", () => {
 
   context("when no users are registered", () => {
     beforeEach(() => {
-      cy.visit("/");
+      cy.visit("/react-test-lab/new-user");
     });
 
     it("should register a new user", () => {
@@ -140,7 +142,7 @@ describe("Home page spec", () => {
 
   context("when form inputs are invalid", () => {
     beforeEach(() => {
-      cy.visit("/");
+      cy.visit("/react-test-lab/new-user");
     });
 
     it("should validate form inputs and disable submit button on errors", () => {

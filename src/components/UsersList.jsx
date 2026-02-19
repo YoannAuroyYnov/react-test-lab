@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 
 export const UsersList = () => {
   const [users, setUsers] = useState(() => {
@@ -21,6 +22,8 @@ export const UsersList = () => {
     };
   }, []);
 
+  const [, navigate] = useLocation();
+
   return (
     <div className="users-list-container">
       <h3>Liste des 5 derniers utilisateurs enregistrés :</h3>
@@ -31,7 +34,11 @@ export const UsersList = () => {
           </li>
         ))}
       </ul>
-      <button data-testid="navigation-button" className="button">
+      <button
+        data-testid="navigation-button"
+        className="button"
+        onClick={() => navigate("/react-test-lab/new-user")}
+      >
         Enregistrer un nouvel utilisateur
       </button>
     </div>
