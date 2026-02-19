@@ -233,6 +233,17 @@ describe("validateName", () => {
       );
     });
   });
+
+  describe.each(["你好", "مرحبا", "Привет", "😀"])(
+    "name with non-latin characters",
+    (name) => {
+      it(`should throw an error for ${name}`, () => {
+        expect(() => validateName(name)).toThrow(
+          "Une erreur inconnue est survenue",
+        );
+      });
+    },
+  );
 });
 
 describe("validateEmail", () => {
