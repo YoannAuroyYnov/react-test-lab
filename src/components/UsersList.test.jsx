@@ -1,13 +1,20 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { UsersList } from "./UsersList";
-import { act } from "react";
+
+let mockNavigate;
+
+jest.mock("wouter", () => ({
+  useLocation: () => ["", mockNavigate],
+}));
 
 beforeEach(() => {
+  mockNavigate = jest.fn();
   localStorage.clear();
 });
 
 test("should display an empty list when no users in local storage", () => {
-  render(<UsersList />);
+  render(<UsersList users={[]} />);
 
   const usersList = screen.getByTestId("users-list");
   expect(usersList).toBeInTheDocument();
@@ -36,7 +43,7 @@ test("should display users stored in localStorage on mount", () => {
 
   localStorage.setItem("users", JSON.stringify(users));
 
-  render(<UsersList />);
+  render(<UsersList users={users} />);
 
   const user1 = screen.getByTestId("user-0");
   expect(user1).toHaveTextContent("1 - John Doe");
@@ -57,7 +64,7 @@ test("should display only the 5 most recent users when more than 5 exist", () =>
 
   localStorage.setItem("users", JSON.stringify(users));
 
-  render(<UsersList />);
+  render(<UsersList users={users} />);
 
   // Should display users 3-7 (last 5)
   expect(screen.getByTestId("user-0")).toHaveTextContent("1 - User3 Last3");
@@ -67,8 +74,8 @@ test("should display only the 5 most recent users when more than 5 exist", () =>
   expect(screen.getByTestId("user-4")).toHaveTextContent("5 - User7 Last7");
 });
 
-test("should re-render when localStorage changes", () => {
-  render(<UsersList />);
+test("should re-render when users prop changes", () => {
+  const { rerender } = render(<UsersList users={[]} />);
 
   const initialList = screen.getByTestId("users-list");
   expect(initialList.children).toHaveLength(0);
@@ -84,16 +91,13 @@ test("should re-render when localStorage changes", () => {
     },
   ];
 
-  localStorage.setItem("users", JSON.stringify(newUsers));
-  act(() => {
-    window.dispatchEvent(new Event("localStorageUpdate"));
-  });
+  rerender(<UsersList users={newUsers} />);
 
   const updatedUser = screen.getByTestId("user-0");
   expect(updatedUser).toHaveTextContent("1 - Alice Wonder");
 });
 
-test("should clear users when handleStorageChange is called with empty localStorage", () => {
+test("should clear users when users prop becomes empty", () => {
   const users = [
     {
       firstname: "Charlie",
@@ -105,17 +109,21 @@ test("should clear users when handleStorageChange is called with empty localStor
     },
   ];
 
-  localStorage.setItem("users", JSON.stringify(users));
-  render(<UsersList />);
+  const { rerender } = render(<UsersList users={users} />);
 
   let usersList = screen.getByTestId("users-list");
   expect(usersList.children).toHaveLength(1);
-
-  localStorage.removeItem("users");
-  act(() => {
-    window.dispatchEvent(new Event("localStorageUpdate"));
-  });
+  rerender(<UsersList users={[]} />);
 
   usersList = screen.getByTestId("users-list");
   expect(usersList.children).toHaveLength(0);
+});
+
+test("should navigate to register page when button is clicked", async () => {
+  render(<UsersList users={[]} />);
+
+  const navigationButton = screen.getByTestId("navigation-button");
+  await userEvent.click(navigationButton);
+
+  expect(mockNavigate).toHaveBeenCalledWith("/register");
 });

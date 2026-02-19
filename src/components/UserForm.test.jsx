@@ -1,7 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Router } from "wouter";
 import { UserForm } from "./UserForm";
+
+const setUsersMock = (updater) => {
+  const prevUsers = JSON.parse(localStorage.getItem("users") || "[]");
+  const nextUsers =
+    typeof updater === "function" ? updater(prevUsers) : updater;
+  localStorage.setItem("users", JSON.stringify(nextUsers));
+};
 
 const getFormElements = () => ({
   firstnameField: screen.getByTestId("firstname-input"),
@@ -24,7 +30,7 @@ beforeEach(() => {
 });
 
 test("should disable submit button when required fields are empty", () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const {
     firstnameField,
@@ -49,7 +55,7 @@ test("should disable submit button when required fields are empty", () => {
 });
 
 test("should enable submit button when all fields are valid", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const {
     firstnameField,
@@ -79,7 +85,7 @@ test("should enable submit button when all fields are valid", async () => {
 });
 
 test("should save a new user to localStorage on valid submit", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const {
     firstnameField,
@@ -134,7 +140,7 @@ test("should save a new user to localStorage on valid submit", async () => {
 });
 
 test("should show an error when firstname is not valid", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const { firstnameField, firstnameErrorText } = getFormElements();
 
@@ -167,7 +173,7 @@ test("should show an error when firstname is not valid", async () => {
 });
 
 test("should show an error when lastname is not valid", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const { lastnameField, lastnameErrorText } = getFormElements();
 
@@ -179,7 +185,7 @@ test("should show an error when lastname is not valid", async () => {
 });
 
 test("should show an error when email is not valid", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const { emailField, emailErrorText } = getFormElements();
 
@@ -195,7 +201,7 @@ test("should show an error when email is not valid", async () => {
 });
 
 test("should show an error when date of birth is not valid", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const { birthField, birthErrorText } = getFormElements();
 
@@ -213,7 +219,7 @@ test("should show an error when date of birth is not valid", async () => {
 });
 
 test("should show an error when zipcode is not valid", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const { zipField, zipErrorText } = getFormElements();
 
@@ -230,37 +236,8 @@ test("should show an error when zipcode is not valid", async () => {
   expect(zipErrorText).toHaveTextContent("");
 });
 
-test("Submit button dispatches localStorageUpdate event", async () => {
-  const dispatchSpy = jest.fn();
-  const originalDispatch = window.dispatchEvent;
-  window.dispatchEvent = dispatchSpy;
-
-  render(<UserForm />);
-
-  const {
-    firstnameField,
-    lastnameField,
-    emailField,
-    birthField,
-    zipField,
-    submitButton,
-  } = getFormElements();
-
-  userEvent.type(firstnameField, "John");
-  userEvent.type(lastnameField, "Doe");
-  userEvent.type(emailField, "john@example.com");
-  userEvent.type(birthField, "1990-01-01");
-  userEvent.type(zipField, "75010");
-
-  userEvent.click(submitButton);
-
-  expect(dispatchSpy).toHaveBeenCalledWith(expect.any(Event));
-
-  window.dispatchEvent = originalDispatch;
-});
-
 test("should reset the form after successful submission", async () => {
-  render(<UserForm />);
+  render(<UserForm setUsers={setUsersMock} />);
 
   const {
     firstnameField,

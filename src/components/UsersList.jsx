@@ -1,27 +1,6 @@
-import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 
-export const UsersList = () => {
-  const [users, setUsers] = useState(() => {
-    const stored = window.localStorage.getItem("users");
-    return stored ? JSON.parse(stored) : [];
-  });
-
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const stored = window.localStorage.getItem("users");
-      setUsers(stored ? JSON.parse(stored) : []);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("localStorageUpdate", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("localStorageUpdate", handleStorageChange);
-    };
-  }, []);
-
+export const UsersList = ({ users }) => {
   const [, navigate] = useLocation();
 
   const severalUsers = users.length > 1;

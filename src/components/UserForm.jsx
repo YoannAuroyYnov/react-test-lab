@@ -17,7 +17,7 @@ const INITIAL_PERSON = {
   zipCode: "",
 };
 
-export const UserForm = () => {
+export const UserForm = ({ setUsers }) => {
   const [disabled, setDisabled] = useState(true);
   const [person, setPerson] = useState(INITIAL_PERSON);
   const [personError, setPersonError] = useState(INITIAL_PERSON);
@@ -121,13 +121,12 @@ export const UserForm = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    const users = localStorage.getItem("users") || "[]";
+    setUsers((prev) => {
+      const updatedUsers = [...prev, person];
+      window.localStorage.setItem("users", JSON.stringify(updatedUsers));
+      return updatedUsers;
+    });
 
-    const usersArray = JSON.parse(users);
-    usersArray.push(person);
-
-    localStorage.setItem("users", JSON.stringify(usersArray));
-    window.dispatchEvent(new Event("localStorageUpdate"));
     setPerson(INITIAL_PERSON);
     setDisabled(true);
     navigate("/");
