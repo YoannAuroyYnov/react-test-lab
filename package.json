@@ -14,6 +14,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "cypress": "cypress open",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "jsdoc": "jsdoc -R ./README.md -c ./jsdoc.config.json -r -d ./public/docs",

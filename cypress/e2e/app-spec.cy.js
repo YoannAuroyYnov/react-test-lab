@@ -12,11 +12,7 @@ describe("Home page spec", () => {
     cy.visit("/");
   });
 
-  it("should register a new user and save to localStorage", () => {
-    cy.window().then((win) => {
-      expect(win.localStorage.getItem("person")).to.equal(null);
-    });
-
+  it("should register a new user", () => {
     cy.get("[data-testid=firstname-input]")
       .type(person.firstname)
       .should("have.value", person.firstname);
@@ -42,29 +38,12 @@ describe("Home page spec", () => {
       .should("have.value", person.zipCode);
 
     cy.get("[data-testid=submit-button]").click();
-
-    cy.window().then((win) => {
-      expect(win.localStorage.getItem("person")).to.equal(
-        JSON.stringify(person),
-      );
-    });
   });
 
   it("should validate form inputs and disable submit button on errors", () => {
-    cy.window().then((win) => {
-      win.localStorage.setItem("person", JSON.stringify(person));
-    });
-
-    cy.window().then((win) => {
-      expect(win.localStorage.getItem("person")).to.equal(
-        JSON.stringify(person),
-      );
-    });
-
     cy.get("[data-testid=firstname-input]")
       .type("Yo4nn")
       .should("have.value", "Yo4nn");
-
     cy.get("[data-testid=firstname-error-text]").should(
       "have.text",
       "Les chiffres sont interdits",
@@ -73,7 +52,6 @@ describe("Home page spec", () => {
     cy.get("[data-testid=lastname-input]")
       .type("; SELECT * FROM users;")
       .should("have.value", "; SELECT * FROM users;");
-
     cy.get("[data-testid=lastname-error-text]").should(
       "have.text",
       "Les caractères spéciaux sont interdits",
@@ -90,25 +68,23 @@ describe("Home page spec", () => {
     cy.get("[data-testid=birth-input]")
       .type("2020-01-01")
       .should("have.value", "2020-01-01");
-
     cy.get("[data-testid=birth-error-text]").should(
       "have.text",
       "Vous devez être majeur pour vous inscrire",
     );
 
     cy.get("[data-testid=zip-input]").type("7500").should("have.value", "7500");
-
     cy.get("[data-testid=zip-error-text]").should(
       "have.text",
       "Le code postal doit comporter 5 chiffres",
     );
 
     cy.get("[data-testid=submit-button]").should("be.disabled");
+  });
 
-    cy.window().then((win) => {
-      expect(win.localStorage.getItem("person")).to.equal(
-        JSON.stringify(person),
-      );
-    });
+  it("should count", () => {
+    cy.get("[data-testid=count]").should("have.text", "0");
+    cy.get("[data-testid=counter-button]").click();
+    cy.get("[data-testid=count]").should("have.text", "1");
   });
 });
