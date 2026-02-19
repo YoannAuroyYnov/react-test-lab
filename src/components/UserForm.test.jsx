@@ -2,6 +2,12 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { UserForm } from "./UserForm";
 
+let mockNavigate;
+
+jest.mock("wouter", () => ({
+  useLocation: () => ["", mockNavigate],
+}));
+
 const setUsersMock = (updater) => {
   const prevUsers = JSON.parse(localStorage.getItem("users") || "[]");
   const nextUsers =
@@ -26,6 +32,7 @@ const getFormElements = () => ({
 });
 
 beforeEach(() => {
+  mockNavigate = jest.fn();
   localStorage.clear();
 });
 
@@ -263,4 +270,13 @@ test("should reset the form after successful submission", async () => {
   expect(birthField).toHaveValue("");
   expect(zipField).toHaveValue("");
   expect(submitButton).toBeDisabled();
+});
+
+test("should navigate to home page when back button is clicked", async () => {
+  render(<UserForm setUsers={setUsersMock} />);
+
+  const { backButton } = getFormElements();
+  userEvent.click(backButton);
+
+  expect(mockNavigate).toHaveBeenCalledWith("/");
 });
