@@ -37,7 +37,7 @@ export const UsersList = () => {
       <button
         data-testid="navigation-button"
         className="button"
-        onClick={() => navigate("/react-test-lab/new-user")}
+        onClick={() => navigate("/new-user")}
       >
         Enregistrer un nouvel utilisateur
       </button>

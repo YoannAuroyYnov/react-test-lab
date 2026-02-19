@@ -130,7 +130,7 @@ export const UserForm = () => {
     window.dispatchEvent(new Event("localStorageUpdate"));
     setPerson(INITIAL_PERSON);
     setDisabled(true);
-    navigate("/react-test-lab");
+    navigate("/");
   };
 
   const requiredIndicator = (
@@ -245,7 +245,7 @@ export const UserForm = () => {
           <button
             data-testid="back-button"
             className="button button-secondary"
-            onClick={() => navigate("/react-test-lab")}
+            onClick={() => navigate("/")}
           >
             Retour
           </button>
