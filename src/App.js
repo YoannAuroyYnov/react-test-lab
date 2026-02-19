@@ -10,7 +10,7 @@ function App() {
         <h1>Bienvenue sur le React Test Lab</h1>
         <Switch>
           <Route path="/" component={UsersList} />
-          <Route path="/new-user" component={UserForm} />
+          <Route path="/register" component={UserForm} />
           <Route>404: No such page!</Route>
         </Switch>
       </div>

@@ -112,7 +112,7 @@ describe("Home page spec", () => {
 
   context("when no users are registered", () => {
     beforeEach(() => {
-      cy.visit("/react-test-lab/new-user");
+      cy.visit("/react-test-lab/register");
     });
 
     it("should display a message when no users are registered", () => {
@@ -151,7 +151,7 @@ describe("Home page spec", () => {
 
   context("when form inputs are invalid", () => {
     beforeEach(() => {
-      cy.visit("/react-test-lab/new-user");
+      cy.visit("/react-test-lab/register");
     });
 
     it("should validate form inputs and disable submit button on errors", () => {

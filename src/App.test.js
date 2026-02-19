@@ -71,9 +71,9 @@ test("displays UsersList component by default", () => {
   expect(userListTitle).toBeInTheDocument();
 });
 
-test("displays UserForm component when location is set to /new-user", async () => {
+test("displays UserForm component when location is set to /register", async () => {
   Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab/new-user" },
+    value: { pathname: "/react-test-lab/register" },
     writable: true,
   });
   render(<App />);
