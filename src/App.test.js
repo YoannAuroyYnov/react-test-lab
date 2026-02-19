@@ -6,17 +6,6 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-test("check counter on click me button", () => {
-  render(<App />);
-
-  const buttonElement = screen.getByText(/click me/i);
-  const counterElement = screen.getByTestId("count");
-  expect(counterElement).toHaveTextContent("0");
-
-  fireEvent.click(buttonElement);
-  expect(counterElement).toHaveTextContent("1");
-});
-
 test("Happy path validation form", () => {
   render(<App />);
 

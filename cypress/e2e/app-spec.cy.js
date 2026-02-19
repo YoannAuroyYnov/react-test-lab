@@ -81,10 +81,4 @@ describe("Home page spec", () => {
 
     cy.get("[data-testid=submit-button]").should("be.disabled");
   });
-
-  it("should count", () => {
-    cy.get("[data-testid=count]").should("have.text", "0");
-    cy.get("[data-testid=counter-button]").click();
-    cy.get("[data-testid=count]").should("have.text", "1");
-  });
 });

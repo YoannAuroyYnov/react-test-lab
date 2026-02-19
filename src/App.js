@@ -1,11 +1,11 @@
 import { UserForm } from "./components/UserForm";
-import { Counter } from "./components/Counter";
+
 import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <Counter />
+      <h1>Bienvenue sur le React Test Lab</h1>
       <UserForm />
     </div>
   );
