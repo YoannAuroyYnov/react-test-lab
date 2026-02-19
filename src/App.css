@@ -7,6 +7,18 @@
   align-items: center;
   font-size: calc(10px + 2vmin);
   color: white;
+
+  ul,
+  ol {
+    justify-self: center;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+
+    li {
+      justify-self: start;
+    }
+  }
 }
 
 .button {
