@@ -118,7 +118,12 @@ export const UserForm = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    localStorage.setItem("person", JSON.stringify(person));
+    const users = localStorage.getItem("users") || "[]";
+
+    const usersArray = JSON.parse(users);
+    usersArray.push(person);
+
+    localStorage.setItem("users", JSON.stringify(usersArray));
     setPerson(INITIAL_PERSON);
     setDisabled(true);
   };

@@ -11,7 +11,7 @@ test("Happy path validation form", () => {
 
   const submitButton = screen.getByTestId("submit-button");
   expect(submitButton).toBeDisabled();
-  expect(JSON.parse(localStorage.getItem("person"))).toBeNull();
+  expect(JSON.parse(localStorage.getItem("users"))).toBeNull();
 
   const firstnameField = screen.getByTestId("firstname-input");
   userEvent.type(firstnameField, "John");
@@ -40,14 +40,16 @@ test("Happy path validation form", () => {
   expect(submitButton).toBeEnabled();
   userEvent.click(submitButton);
 
-  expect(JSON.parse(localStorage.getItem("person"))).toEqual({
-    firstname: "John",
-    lastname: "Doe",
-    birth: "1986-12-31",
-    email: "john.doe@mail.com",
-    zipCode: "75010",
-    city: "undefined city",
-  });
+  expect(JSON.parse(localStorage.getItem("users"))).toEqual([
+    {
+      firstname: "John",
+      lastname: "Doe",
+      birth: "1986-12-31",
+      email: "john.doe@mail.com",
+      zipCode: "75010",
+      city: "undefined city",
+    },
+  ]);
 
   expect(firstnameField).toHaveValue("");
   expect(lastnameField).toHaveValue("");
