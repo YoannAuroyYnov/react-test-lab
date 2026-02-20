@@ -19,11 +19,12 @@ export const UsersList = ({ users }) => {
           : "Créez en un pour voir la liste des utilisateurs enregistrés !"}
       </h3>
       <ul data-testid="users-list" className="list-none">
-        {users.slice(-5).map((user, index) => (
-          <li key={index} data-testid={`user-${index}`}>
-            {index + 1} - {user.firstname} {user.lastname}
-          </li>
-        ))}
+        {users.length > 0 &&
+          users.slice(-5).map((user, index) => (
+            <li key={index} data-testid={`user-${index}`}>
+              {index + 1} - {user.name}
+            </li>
+          ))}
       </ul>
       <button
         data-testid="navigation-button"

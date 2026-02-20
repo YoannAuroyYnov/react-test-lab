@@ -1,13 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Route, Router, Switch } from "wouter";
 import { UserForm } from "./components/UserForm";
 import { UsersList } from "./components/UsersList";
+import { getAllUsers } from "./infra/api";
 import "./App.css";
 
 function App() {
-  const [users, setUsers] = useState(
-    JSON.parse(window.localStorage.getItem("users")) ?? [],
-  );
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadUsers = async () => {
+      try {
+        const fetchedUsers = await getAllUsers();
+        if (!isMounted) return;
+        setUsers(Array.isArray(fetchedUsers) ? fetchedUsers : []);
+      } catch (error) {
+        if (!isMounted) return;
+        console.error("Failed to fetch users:", error);
+        alert(
+          "Une erreur est survenue lors du chargement des utilisateurs. Veuillez réessayer.",
+        );
+        setUsers([]);
+      }
+    };
+
+    loadUsers();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <Router base="/react-test-lab">

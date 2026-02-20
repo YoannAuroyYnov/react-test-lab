@@ -8,6 +8,7 @@ import {
   validateZipCode,
 } from "../utils/validator";
 import { TextInput } from "./atomic/TextInput";
+import { createOneUser } from "../infra/api";
 
 const INITIAL_PERSON = {
   firstname: "",
@@ -74,14 +75,29 @@ export const UserForm = ({ setUsers }) => {
     }
   }, [person]);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
-    setUsers((prev) => {
-      const updatedUsers = [...prev, person];
-      window.localStorage.setItem("users", JSON.stringify(updatedUsers));
-      return updatedUsers;
-    });
+    const user = {
+      name: `${person.firstname} ${person.lastname}`,
+      ...person,
+    };
+
+    try {
+      const createdUser = await createOneUser(user);
+
+      setUsers((prev) => {
+        const updatedUsers = [...prev, createdUser];
+        window.localStorage.setItem("users", JSON.stringify(updatedUsers));
+        return updatedUsers;
+      });
+    } catch (error) {
+      console.error("Failed to create user:", error);
+      alert(
+        "Une erreur est survenue lors de la création de l'utilisateur. Veuillez réessayer.",
+      );
+      return;
+    }
 
     setPerson(INITIAL_PERSON);
     setDisabled(true);
