@@ -71,6 +71,11 @@ Vous pouvez aussi utiliser l'interface graphique :
 pnpm cypress
 ```
 
+#### Mocks utilisés dans les tests
+
+- **Jest / Testing Library** : `axios` est mocké dans les tests (par ex. `App.test.js`) pour contrôler les réponses de l'API `/users` et déclencher les chemins heureux ou d'erreur sans requêtes réseau réelles.
+- **Cypress** : les appels HTTP sont interceptés avec `cy.intercept` (ex. `cypress/e2e/navigation.cy.js`) pour stubber `GET /users` et `POST /users`, simuler un premier chargement vide ou prérempli, et forcer un retour `201` lors de la création d'utilisateur. Cela rend les parcours E2E déterministes et rapides.
+
 ## Documentation
 
 Pour générer la documentation JSDoc :
