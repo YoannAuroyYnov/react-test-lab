@@ -9,8 +9,9 @@ beforeAll(() => {
 });
 
 const renderAndWait = async () => {
-  render(<App />);
+  const utils = render(<App />);
   await waitFor(() => expect(axios.get).toHaveBeenCalled());
+  return utils;
 };
 
 describe("App component", () => {
@@ -147,5 +148,121 @@ describe("App component", () => {
 
     const notFoundMessage = screen.getByText("404: No such page!");
     expect(notFoundMessage).toBeInTheDocument();
+  });
+
+  test("handles fetch errors by alerting and clearing users", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
+
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    axios.get.mockRejectedValueOnce(new Error("Network Error"));
+
+    await renderAndWait();
+
+    await waitFor(() =>
+      expect(window.alert).toHaveBeenCalledWith(
+        "Une erreur est survenue lors du chargement des utilisateurs. Veuillez réessayer.",
+      ),
+    );
+
+    const counter = screen.getByTestId("users-counter");
+    expect(counter).toHaveTextContent("Il n'y a aucun utilisateur enregistré");
+
+    consoleSpy.mockRestore();
+  });
+
+  test("shows alert when API returns 500", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
+
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const error = new Error("Server error");
+    error.response = { status: 500 };
+    axios.get.mockRejectedValueOnce(error);
+
+    await renderAndWait();
+
+    await waitFor(() =>
+      expect(window.alert).toHaveBeenCalledWith(
+        "Une erreur est survenue lors du chargement des utilisateurs. Veuillez réessayer.",
+      ),
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  test("shows alert when API returns 400", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
+
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const error = new Error("Bad request");
+    error.response = { status: 400 };
+    axios.get.mockRejectedValueOnce(error);
+
+    await renderAndWait();
+
+    await waitFor(() =>
+      expect(window.alert).toHaveBeenCalledWith(
+        "Une erreur est survenue lors du chargement des utilisateurs. Veuillez réessayer.",
+      ),
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  test("handles non-array API response by clearing users", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
+
+    axios.get.mockResolvedValueOnce({ data: { unexpected: true } });
+
+    await renderAndWait();
+
+    const counter = screen.getByTestId("users-counter");
+    expect(counter).toHaveTextContent("Il n'y a aucun utilisateur enregistré");
+  });
+
+  test("ignores late rejection after unmount", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
+
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+    let rejectFn;
+    axios.get.mockReturnValueOnce(
+      new Promise((_, reject) => {
+        rejectFn = reject;
+      }),
+    );
+
+    const { unmount } = await renderAndWait();
+
+    unmount();
+
+    rejectFn(new Error("Late failure"));
+
+    await waitFor(() => {
+      expect(window.alert).not.toHaveBeenCalled();
+      expect(consoleSpy).not.toHaveBeenCalled();
+    });
+
+    consoleSpy.mockRestore();
   });
 });
