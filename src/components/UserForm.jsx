@@ -88,7 +88,6 @@ export const UserForm = ({ setUsers }) => {
 
       setUsers((prev) => {
         const updatedUsers = [...prev, createdUser];
-        window.localStorage.setItem("users", JSON.stringify(updatedUsers));
         return updatedUsers;
       });
     } catch (error) {
@@ -194,6 +193,7 @@ export const UserForm = ({ setUsers }) => {
             <button
               data-testid="back-button"
               className="button button-secondary"
+              type="button"
               onClick={() => navigate("/")}
             >
               Retour

@@ -1,6 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { UsersList } from "./UsersList";
+import { getAllUsers } from "../infra/api";
+import axios from "axios";
+jest.mock("axios");
 
 let mockNavigate;
 
@@ -10,30 +13,33 @@ jest.mock("wouter", () => ({
 
 beforeEach(() => {
   mockNavigate = jest.fn();
-  localStorage.clear();
 });
 
-test("should display an empty list when no users in local storage", () => {
-  render(<UsersList users={[]} />);
+test("should display an empty list when no users in data response", async () => {
+  const data = [];
+
+  axios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+  const users = await getAllUsers();
+  expect(users).toEqual(data);
+
+  render(<UsersList users={users} />);
 
   const usersList = screen.getByTestId("users-list");
   expect(usersList).toBeInTheDocument();
   expect(usersList.children).toHaveLength(0);
 });
 
-test("should display users stored in localStorage on mount", () => {
-  const users = [
+test("should display users from api call on mount", async () => {
+  const data = [
     {
-      firstname: "John",
-      lastname: "Doe",
+      name: "John Doe",
       email: "john@example.com",
       birth: "1990-01-01",
       city: "Paris",
       zipCode: "75001",
     },
     {
-      firstname: "Jane",
-      lastname: "Smith",
+      name: "Jane Smith",
       email: "jane@example.com",
       birth: "1992-03-15",
       city: "Lyon",
@@ -41,7 +47,9 @@ test("should display users stored in localStorage on mount", () => {
     },
   ];
 
-  localStorage.setItem("users", JSON.stringify(users));
+  axios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+  const users = await getAllUsers();
+  expect(users).toEqual(data);
 
   render(<UsersList users={users} />);
 
@@ -52,17 +60,18 @@ test("should display users stored in localStorage on mount", () => {
   expect(user2).toHaveTextContent("2 - Jane Smith");
 });
 
-test("should display only the 5 most recent users when more than 5 exist", () => {
-  const users = Array.from({ length: 7 }, (_, i) => ({
-    firstname: `User${i + 1}`,
-    lastname: `Last${i + 1}`,
+test("should display only the 5 most recent users when more than 5 exist", async () => {
+  const data = Array.from({ length: 7 }, (_, i) => ({
+    name: `User${i + 1} Last${i + 1}`,
     email: `user${i + 1}@example.com`,
     birth: "1990-01-01",
     city: "Paris",
     zipCode: "75001",
   }));
 
-  localStorage.setItem("users", JSON.stringify(users));
+  axios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+  const users = await getAllUsers();
+  expect(users).toEqual(data);
 
   render(<UsersList users={users} />);
 
@@ -82,8 +91,7 @@ test("should re-render when users prop changes", () => {
 
   const newUsers = [
     {
-      firstname: "Alice",
-      lastname: "Wonder",
+      name: "Alice Wonder",
       email: "alice@example.com",
       birth: "1995-05-20",
       city: "Marseille",
@@ -100,8 +108,7 @@ test("should re-render when users prop changes", () => {
 test("should clear users when users prop becomes empty", () => {
   const users = [
     {
-      firstname: "Charlie",
-      lastname: "Brown",
+      name: "Charlie Brown",
       email: "charlie@example.com",
       birth: "1988-03-22",
       city: "Bordeaux",

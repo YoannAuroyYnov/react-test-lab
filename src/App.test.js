@@ -1,96 +1,151 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
+import axios from "axios";
+jest.mock("axios");
 
-beforeEach(() => {
-  localStorage.clear();
+beforeAll(() => {
+  jest.spyOn(window, "alert").mockImplementation(() => {});
 });
 
-test("renders welcome title on App", () => {
+const renderAndWait = async () => {
   render(<App />);
+  await waitFor(() => expect(axios.get).toHaveBeenCalled());
+};
 
-  const title = screen.getByText("Bienvenue sur le React Test Lab");
-  expect(title).toBeInTheDocument();
-});
-
-test("renders an empty counter when no users are registered", () => {
-  Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab" },
-    writable: true,
+describe("App component", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    axios.get.mockResolvedValue({ data: [] });
   });
-  render(<App />);
 
-  const counter = screen.getByTestId("users-counter");
-  expect(counter).toBeInTheDocument();
-  expect(counter).toHaveTextContent("Il n'y a aucun utilisateur enregistré");
-});
-
-test("renders a counter when a user is registered", () => {
-  Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab" },
-    writable: true,
+  afterAll(() => {
+    window.alert.mockRestore();
   });
-  localStorage.setItem(
-    "users",
-    JSON.stringify([{ firstname: "Alice", lastname: "Smith" }]),
-  );
-  render(<App />);
 
-  const counter = screen.getByTestId("users-counter");
-  expect(counter).toBeInTheDocument();
-  expect(counter).toHaveTextContent("Il y a 1 utilisateur enregistré");
-});
+  test("renders welcome title on App", async () => {
+    await renderAndWait();
 
-test("renders a counter when several users are registered", () => {
-  Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab" },
-    writable: true,
+    const title = screen.getByText("Bienvenue sur le React Test Lab");
+    expect(title).toBeInTheDocument();
   });
-  localStorage.setItem(
-    "users",
-    JSON.stringify([
-      { firstname: "Alice", lastname: "Smith" },
-      { firstname: "Bob", lastname: "Johnson" },
-    ]),
-  );
-  render(<App />);
 
-  const counter = screen.getByTestId("users-counter");
-  expect(counter).toBeInTheDocument();
-  expect(counter).toHaveTextContent("Il y a 2 utilisateurs enregistrés");
-});
+  test("renders an empty counter when no users are registered", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
 
-test("displays UsersList component by default", () => {
-  Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab" },
-    writable: true,
+    axios.get.mockImplementation(() => Promise.resolve({ data: [] }));
+    await renderAndWait();
+
+    const counter = screen.getByTestId("users-counter");
+    expect(counter).toBeInTheDocument();
+    expect(counter).toHaveTextContent("Il n'y a aucun utilisateur enregistré");
   });
-  render(<App />);
 
-  const userListTitle = screen.getByText(
-    "Créez en un pour voir la liste des utilisateurs enregistrés !",
-  );
-  expect(userListTitle).toBeInTheDocument();
-});
+  test("renders a counter when a user is registered", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
 
-test("displays UserForm component when location is set to /register", async () => {
-  Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab/register" },
-    writable: true,
+    const data = {
+      data: [
+        {
+          name: "John Doe",
+          firstname: "John",
+          lastname: "Doe",
+          email: "john@example.com",
+          birth: "1990-01-01",
+          zipCode: "75010",
+          city: "",
+        },
+      ],
+    };
+
+    axios.get.mockImplementation(() => Promise.resolve(data));
+    await renderAndWait();
+
+    const counter = screen.getByTestId("users-counter");
+    expect(counter).toBeInTheDocument();
+    await waitFor(() =>
+      expect(counter).toHaveTextContent("Il y a 1 utilisateur enregistré"),
+    );
   });
-  render(<App />);
 
-  const userFormTitle = screen.getByText("Enregistrer un nouvel utilisateur");
-  expect(userFormTitle).toBeInTheDocument();
-});
+  test("renders a counter when several users are registered", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
 
-test("displays 404 message for unknown routes", () => {
-  Object.defineProperty(window, "location", {
-    value: { pathname: "/react-test-lab/unknown" },
-    writable: true,
+    const data = {
+      data: [
+        {
+          name: "John Doe",
+          firstname: "John",
+          lastname: "Doe",
+          email: "john@example.com",
+          birth: "1990-01-01",
+          zipCode: "75010",
+          city: "",
+        },
+        {
+          name: "Jane Smith",
+          firstname: "Jane",
+          lastname: "Smith",
+          email: "jane@example.com",
+          birth: "1992-05-05",
+          zipCode: "75001",
+          city: "",
+        },
+      ],
+    };
+
+    axios.get.mockImplementationOnce(() => Promise.resolve(data));
+
+    await renderAndWait();
+
+    const counter = screen.getByTestId("users-counter");
+    expect(counter).toBeInTheDocument();
+    await waitFor(() =>
+      expect(counter).toHaveTextContent("Il y a 2 utilisateurs enregistrés"),
+    );
   });
-  render(<App />);
 
-  const notFoundMessage = screen.getByText("404: No such page!");
-  expect(notFoundMessage).toBeInTheDocument();
+  test("displays UsersList component by default", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab" },
+      writable: true,
+    });
+    await renderAndWait();
+
+    const userListTitle = screen.getByText(
+      "Créez en un pour voir la liste des utilisateurs enregistrés !",
+    );
+    expect(userListTitle).toBeInTheDocument();
+  });
+
+  test("displays UserForm component when location is set to /register", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab/register" },
+      writable: true,
+    });
+    await renderAndWait();
+
+    const userFormTitle = screen.getByText("Enregistrer un nouvel utilisateur");
+    expect(userFormTitle).toBeInTheDocument();
+  });
+
+  test("displays 404 message for unknown routes", async () => {
+    Object.defineProperty(window, "location", {
+      value: { pathname: "/react-test-lab/unknown" },
+      writable: true,
+    });
+    await renderAndWait();
+
+    const notFoundMessage = screen.getByText("404: No such page!");
+    expect(notFoundMessage).toBeInTheDocument();
+  });
 });

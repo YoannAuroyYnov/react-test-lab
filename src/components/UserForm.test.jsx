@@ -1,6 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { UserForm } from "./UserForm";
+import { createOneUser } from "../infra/api";
+import axios from "axios";
+jest.mock("axios");
 
 let mockNavigate;
 
@@ -8,12 +11,8 @@ jest.mock("wouter", () => ({
   useLocation: () => ["", mockNavigate],
 }));
 
-const setUsersMock = (updater) => {
-  const prevUsers = JSON.parse(localStorage.getItem("users") || "[]");
-  const nextUsers =
-    typeof updater === "function" ? updater(prevUsers) : updater;
-  localStorage.setItem("users", JSON.stringify(nextUsers));
-};
+let usersState = [];
+const setUsersStateMock = jest.fn();
 
 const getFormElements = () => ({
   firstnameField: screen.getByTestId("firstname-input"),
@@ -33,11 +32,10 @@ const getFormElements = () => ({
 
 beforeEach(() => {
   mockNavigate = jest.fn();
-  localStorage.clear();
 });
 
 test("should disable submit button when required fields are empty", () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const {
     firstnameField,
@@ -62,7 +60,7 @@ test("should disable submit button when required fields are empty", () => {
 });
 
 test("should enable submit button when all fields are valid", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const {
     firstnameField,
@@ -91,8 +89,10 @@ test("should enable submit button when all fields are valid", async () => {
   expect(submitButton).toBeEnabled();
 });
 
-test("should save a new user to localStorage on valid submit", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+test("should save a new user on valid submit", async () => {
+  const data = usersState;
+
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const {
     firstnameField,
@@ -105,7 +105,6 @@ test("should save a new user to localStorage on valid submit", async () => {
   } = getFormElements();
 
   expect(submitButton).toBeDisabled();
-  expect(JSON.parse(localStorage.getItem("users"))).toBeNull();
 
   userEvent.type(firstnameField, "John");
   expect(firstnameField).toHaveValue("John");
@@ -126,18 +125,33 @@ test("should save a new user to localStorage on valid submit", async () => {
   expect(zipField).toHaveValue("75010");
 
   expect(submitButton).toBeEnabled();
-  userEvent.click(submitButton);
 
-  expect(JSON.parse(localStorage.getItem("users"))).toEqual([
-    {
+  axios.post.mockResolvedValue({
+    data: {
       firstname: "John",
       lastname: "Doe",
-      birth: "1986-12-31",
+      name: "John Doe",
       email: "john.doe@mail.com",
+      birth: "1986-12-31",
       zipCode: "75010",
       city: "undefined city",
     },
-  ]);
+  });
+  userEvent.click(submitButton);
+
+  const url = `${process.env.REACT_APP_API_URL}/users`;
+
+  expect(axios.post).toHaveBeenCalledWith(url, {
+    name: "John Doe",
+    firstname: "John",
+    lastname: "Doe",
+    email: "john.doe@mail.com",
+    birth: "1986-12-31",
+    zipCode: "75010",
+    city: "undefined city",
+  });
+
+  await waitFor(() => expect(setUsersStateMock).toHaveBeenCalled());
 
   expect(firstnameField).toHaveValue("");
   expect(lastnameField).toHaveValue("");
@@ -147,7 +161,7 @@ test("should save a new user to localStorage on valid submit", async () => {
 });
 
 test("should show an error when firstname is not valid", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const { firstnameField, firstnameErrorText } = getFormElements();
 
@@ -180,7 +194,7 @@ test("should show an error when firstname is not valid", async () => {
 });
 
 test("should show an error when lastname is not valid", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const { lastnameField, lastnameErrorText } = getFormElements();
 
@@ -192,7 +206,7 @@ test("should show an error when lastname is not valid", async () => {
 });
 
 test("should show an error when email is not valid", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const { emailField, emailErrorText } = getFormElements();
 
@@ -208,7 +222,7 @@ test("should show an error when email is not valid", async () => {
 });
 
 test("should show an error when date of birth is not valid", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const { birthField, birthErrorText } = getFormElements();
 
@@ -226,7 +240,7 @@ test("should show an error when date of birth is not valid", async () => {
 });
 
 test("should show an error when zipcode is not valid", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const { zipField, zipErrorText } = getFormElements();
 
@@ -244,7 +258,7 @@ test("should show an error when zipcode is not valid", async () => {
 });
 
 test("should reset the form after successful submission", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const {
     firstnameField,
@@ -262,18 +276,43 @@ test("should reset the form after successful submission", async () => {
   userEvent.type(zipField, "75010");
 
   expect(submitButton).toBeEnabled();
+  axios.post.mockResolvedValue({
+    data: {
+      firstname: "John",
+      lastname: "Doe",
+      name: "John Doe",
+      email: "john@example.com",
+      birth: "1990-01-01",
+      zipCode: "75010",
+      city: "",
+    },
+  });
   userEvent.click(submitButton);
 
-  expect(firstnameField).toHaveValue("");
-  expect(lastnameField).toHaveValue("");
-  expect(emailField).toHaveValue("");
-  expect(birthField).toHaveValue("");
-  expect(zipField).toHaveValue("");
-  expect(submitButton).toBeDisabled();
+  const url = `${process.env.REACT_APP_API_URL}/users`;
+
+  expect(axios.post).toHaveBeenCalledWith(url, {
+    name: "John Doe",
+    firstname: "John",
+    lastname: "Doe",
+    email: "john@example.com",
+    birth: "1990-01-01",
+    zipCode: "75010",
+    city: "",
+  });
+
+  await waitFor(() => {
+    expect(firstnameField).toHaveValue("");
+    expect(lastnameField).toHaveValue("");
+    expect(emailField).toHaveValue("");
+    expect(birthField).toHaveValue("");
+    expect(zipField).toHaveValue("");
+    expect(submitButton).toBeDisabled();
+  });
 });
 
 test("should navigate to home page when back button is clicked", async () => {
-  render(<UserForm setUsers={setUsersMock} />);
+  render(<UserForm setUsers={setUsersStateMock} />);
 
   const { backButton } = getFormElements();
   userEvent.click(backButton);
