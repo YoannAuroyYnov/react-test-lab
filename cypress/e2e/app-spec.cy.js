@@ -10,16 +10,13 @@ describe("Home page spec", () => {
 
   context("when users are already registered", () => {
     const users = [
-      { firstname: "Alice", lastname: "Smith" },
-      { firstname: "Bob", lastname: "Johnson" },
+      { firstname: "Alice", lastname: "Smith", name: "Alice Smith" },
+      { firstname: "Bob", lastname: "Johnson", name: "Bob Johnson" },
     ];
 
     beforeEach(() => {
-      cy.visit("/react-test-lab", {
-        onBeforeLoad(win) {
-          win.localStorage.setItem("users", JSON.stringify(users));
-        },
-      });
+      cy.intercept("GET", "/users", users);
+      cy.visit("/react-test-lab");
     });
 
     it("should count the number of registered users", () => {
@@ -72,29 +69,13 @@ describe("Home page spec", () => {
 
     it("should display only the 5 most recent users", () => {
       const moreUsers = [
-        { firstname: "Charlie", lastname: "Brown" },
-        { firstname: "David", lastname: "Wilson" },
-        { firstname: "Eve", lastname: "Davis" },
-        { firstname: "Frank", lastname: "Miller" },
+        { firstname: "Charlie", lastname: "Brown", name: "Charlie Brown" },
+        { firstname: "David", lastname: "Wilson", name: "David Wilson" },
+        { firstname: "Eve", lastname: "Davis", name: "Eve Davis" },
+        { firstname: "Frank", lastname: "Miller", name: "Frank Miller" },
       ];
-
-      cy.visit("/react-test-lab", {
-        onBeforeLoad(win) {
-          win.localStorage.setItem(
-            "users",
-            JSON.stringify([...users, ...moreUsers]),
-          );
-        },
-      });
-
-      cy.window().then((win) => {
-        const storedUsers = JSON.parse(win.localStorage.getItem("users"));
-        expect(storedUsers).to.have.length(6);
-        expect(storedUsers[0]).to.deep.equal({
-          firstname: "Alice",
-          lastname: "Smith",
-        });
-      });
+      cy.intercept("GET", "/users", [...users, ...moreUsers]);
+      cy.visit("/react-test-lab");
 
       cy.get("[data-testid=users-list]").children().should("have.length", 5);
 

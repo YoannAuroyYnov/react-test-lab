@@ -1,5 +1,6 @@
 describe("Navigation spec", () => {
   const person = {
+    name: "Yoann Auroy",
     firstname: "Yoann",
     lastname: "Auroy",
     email: "yoann.auroy@ynov.com",
@@ -9,6 +10,14 @@ describe("Navigation spec", () => {
   };
 
   context("when no user is registered", () => {
+    beforeEach(() => {
+      cy.intercept("GET", "/users", []);
+      cy.intercept("POST", "/users", {
+        statusCode: 201,
+        body: { ...person, id: 1 },
+      });
+    });
+
     it("should navigate on the nominal flow", () => {
       cy.visit("/react-test-lab");
       cy.get("h2").should("have.text", "Il n'y a aucun utilisateur enregistré");
@@ -57,14 +66,11 @@ describe("Navigation spec", () => {
 
   context("when a user is already registered", () => {
     beforeEach(() => {
-      cy.visit("/react-test-lab", {
-        onBeforeLoad(win) {
-          win.localStorage.setItem("users", JSON.stringify([person]));
-        },
-      });
+      cy.intercept("GET", "/users", [person]);
     });
 
     it("should not navigate on error flow", () => {
+      cy.visit("/react-test-lab");
       cy.get("h2").should("have.text", "Il y a 1 utilisateur enregistré");
 
       cy.get("[data-testid=navigation-button]").click();
