@@ -1,5 +1,5 @@
 {
-  "name": "react_test_lab",
+  "name": "@yoann-86/react_test_lab",
   "version": "0.1.0",
   "private": false,
   "homepage": "https://yoannauroyynov.github.io/react-test-lab/",
@@ -16,9 +16,11 @@
     "wouter": "^3.9.0"
   },
   "scripts": {
+    "adduser": "login",
     "cypress": "cypress open",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:npm": "NODE_ENV=production && rm -rf dist && mkdir dist && npx babel src --out-dir dist --copy-files",
     "jsdoc": "jsdoc -R ./README.md -c ./jsdoc.config.json -r -d ./public/docs",
     "test": "react-scripts test --coverage --collectCoverageFrom=!src/reportWebVitals.js --collectCoverageFrom=!src/index.js --watchAll=false",
     "eject": "react-scripts eject"
@@ -42,6 +44,9 @@
     ]
   },
   "devDependencies": {
+    "@babel/cli": "^7.28.6",
+    "@babel/core": "^7.29.0",
+    "@babel/plugin-transform-react-jsx": "^7.28.6",
     "cypress": "^15.10.0",
     "jsdoc": "^4.0.5",
     "react-test-renderer": "^19.2.4"
@@ -50,5 +55,8 @@
     "transformIgnorePatterns": [
       "node_modules/(?!wouter)/"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

@@ -1,0 +1,35 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+.env 
+
+# dependencies
+/node_modules
+/server/node_modules
+/server/__pycache__
+/src
+/.pnp
+.pnp.js
+/build
+
+# testing
+/coverage
+
+# docs
+/docs
+/public/docs
+
+# production
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# weird
+.npmrc
