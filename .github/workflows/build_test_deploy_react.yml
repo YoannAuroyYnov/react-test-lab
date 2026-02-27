@@ -127,13 +127,6 @@ jobs:
         uses: ./.github/actions/install-node
       - name: Authenticate with npm
         run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-      - name: 📌 Version Bump
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "yoann.ar.pro@gmail.com"
-          pnpm version patch
-          git push
-          git push --tags
       - name: 🔍 Version Check
         id: version-check
         run: |
