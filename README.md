@@ -92,6 +92,15 @@ Le projet est automatiquement déployé sur GitHub Pages via GitHub Actions lors
 
 URL de déploiement : https://yoannauroyynov.github.io/react-test-lab/
 
+## Publication npm
+
+Le package est automatiquement publié sur npm via la CI/CD lors d'un push sur `main` :
+
+- **Vérification** : La publication n'a lieu que si la version dans `package.json` est strictement supérieure à celle publiée sur npm
+- **Tag git** : Un tag de version peut être créé manuellement avant le push
+
+Package disponible sur npm : [@yoann-86/react_test_lab](https://www.npmjs.com/package/@yoann-86/react_test_lab)
+
 ## Configuration CI/CD - Note sur l'optimisation
 
 **⚠️ Important :** La configuration CI/CD actuelle (parallélisation des jobs, caching pnpm, etc.) est explorée à titre **éducatif**. Sur un projet de cette taille, ces optimisations ne sont **pas pertinentes** en pratique.
