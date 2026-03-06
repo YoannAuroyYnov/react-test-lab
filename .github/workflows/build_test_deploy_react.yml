@@ -130,7 +130,17 @@ jobs:
             -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
             --name migration_container migration_mysql
       - name: ⏳ Wait for MySQL
-        run: sleep 20
+        run: |
+          for i in {1..30}; do
+            if docker exec migration_container mysqladmin ping -h 127.0.0.1 -uroot -p"$MYSQL_ROOT_PASSWORD" --silent > /dev/null 2>&1; then
+              echo "✅ MySQL ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "❌ MySQL not ready after 30s"
+          docker logs migration_container
+          exit 1
       - name: 🚀 Run FastAPI container
         run: |
           docker run -d -p 8000:8000 \
@@ -141,7 +151,17 @@ jobs:
             -e MYSQL_HOST=$MYSQL_HOST \
             --name api_container api_python
       - name: ⏳ Wait for API
-        run: sleep 10
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:8000/openapi.json > /dev/null; then
+              echo "✅ API ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "❌ API not ready after 30s"
+          docker logs api_container
+          exit 1
       - name: ✅ Verify API is running
         run: |
           RESPONSE=$(curl -sf http://localhost:8000/users)
