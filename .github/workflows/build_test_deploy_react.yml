@@ -137,9 +137,6 @@ jobs:
             --name api_container api_python
       - name: ⏳ Wait for API
         run: sleep 10
-
-      - name: Log container logs for debugging
-        run: docker logs api_container
       - name: ✅ Verify API is running
         run: |
           RESPONSE=$(curl -sf http://localhost:8000/users)
