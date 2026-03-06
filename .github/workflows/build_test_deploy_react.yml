@@ -111,6 +111,11 @@ jobs:
     steps:
       - name: 👯‍♂️ Clone repository
         uses: actions/checkout@v4
+      - name: 🔧 Get npm version
+        id: version-tag
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
       - name: 🐳 Build MySQL image
         run: docker build -t migration_mysql .
       - name: 🐳 Build Python/FastAPI image
@@ -155,15 +160,23 @@ jobs:
       - name: 🏷️ Tag Docker images
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          IMAGE_TAG: ${{ steps.version-tag.outputs.VERSION }}
         run: |
           docker tag migration_mysql $DOCKER_USERNAME/migration_mysql:latest
+          docker tag migration_mysql $DOCKER_USERNAME/migration_mysql:$IMAGE_TAG
+
           docker tag api_python $DOCKER_USERNAME/api_python:latest
+          docker tag api_python $DOCKER_USERNAME/api_python:$IMAGE_TAG
       - name: 📤 Push images to Docker Hub
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          IMAGE_TAG: ${{ steps.version-tag.outputs.VERSION }}
         run: |
           docker push $DOCKER_USERNAME/migration_mysql:latest
+          docker push $DOCKER_USERNAME/migration_mysql:$IMAGE_TAG
+
           docker push $DOCKER_USERNAME/api_python:latest
+          docker push $DOCKER_USERNAME/api_python:$IMAGE_TAG
 
   # deploy:
   #   name: 🚀 Deploy to GitHub Pages
