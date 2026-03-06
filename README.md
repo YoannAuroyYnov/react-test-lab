@@ -101,6 +101,10 @@ Le package est automatiquement publié sur npm via la CI/CD lors d'un push sur `
 
 Package disponible sur npm : [@yoann-86/react_test_lab](https://www.npmjs.com/package/@yoann-86/react_test_lab)
 
+## Publication Docker Hub
+
+Lors du job CI `docker-build-and-run`, les images Docker `migration_mysql` et `api_python` sont construites puis publiées sur Docker Hub. Chaque image est poussée avec le tag `latest` ainsi qu'un tag de version basé sur la valeur `version` du `package.json`, ce qui permet d'utiliser soit la dernière image disponible, soit une version précise.
+
 ## Configuration CI/CD - Note sur l'optimisation
 
 **⚠️ Important :** La configuration CI/CD actuelle (parallélisation des jobs, caching pnpm, etc.) est explorée à titre **éducatif**. Sur un projet de cette taille, ces optimisations ne sont **pas pertinentes** en pratique.
