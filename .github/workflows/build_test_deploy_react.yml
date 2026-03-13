@@ -116,52 +116,20 @@ jobs:
         run: |
           VERSION=$(jq -r '.version' package.json)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-      - name: 🐳 Build MySQL image
-        run: docker build -t migration_mysql .
-      - name: 🐳 Build Python/FastAPI image
-        run: docker build -t api_python ./api
-      - name: 🚀 Run MySQL container
+      - name: 🐳 Build and run Docker
         run: |
-          docker run -d -p 3306:3306 \
-            --add-host=host.docker.internal:host-gateway \
-            -e MYSQL_DATABASE=$MYSQL_DATABASE \
-            -e MYSQL_USER=$MYSQL_USER \
-            -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
-            -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD \
-            --name migration_container migration_mysql
-      - name: ⏳ Wait for MySQL
+          docker compose up --build -d
+      - name: ⏳ Wait 10 seconds for services to initialize
+        run: sleep 10
+      - name: ✅ Verify MySQL is running
         run: |
-          for i in {1..30}; do
-            if docker exec migration_container mysqladmin ping -h 127.0.0.1 -uroot -p"$MYSQL_ROOT_PASSWORD" --silent > /dev/null 2>&1; then
-              echo "✅ MySQL ready"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "❌ MySQL not ready after 30s"
-          docker logs migration_container
-          exit 1
-      - name: 🚀 Run FastAPI container
-        run: |
-          docker run -d -p 8000:8000 \
-            --add-host=host.docker.internal:host-gateway \
-            -e MYSQL_DATABASE=$MYSQL_DATABASE \
-            -e MYSQL_USER=$MYSQL_USER \
-            -e MYSQL_PASSWORD=$MYSQL_PASSWORD \
-            -e MYSQL_HOST=$MYSQL_HOST \
-            --name api_container api_python
-      - name: ⏳ Wait for API
-        run: |
-          for i in {1..30}; do
-            if curl -sf http://localhost:8000/openapi.json > /dev/null; then
-              echo "✅ API ready"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "❌ API not ready after 30s"
-          docker logs api_container
-          exit 1
+          if docker exec mysql-db mysqladmin ping -h 127.0.0.1 -uroot -p"$MYSQL_ROOT_PASSWORD" --silent > /dev/null 2>&1; then
+            echo "✅ MySQL is running"
+          else
+            echo "❌ MySQL is not running"
+            docker logs mysql-db
+            exit 1
+          fi
       - name: ✅ Verify API is running
         run: |
           RESPONSE=$(curl -sf http://localhost:8000/users)
@@ -182,9 +150,6 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           IMAGE_TAG: ${{ steps.version-tag.outputs.VERSION }}
         run: |
-          docker tag migration_mysql $DOCKER_USERNAME/migration_mysql:latest
-          docker tag migration_mysql $DOCKER_USERNAME/migration_mysql:$IMAGE_TAG
-
           docker tag api_python $DOCKER_USERNAME/api_python:latest
           docker tag api_python $DOCKER_USERNAME/api_python:$IMAGE_TAG
       - name: 📤 Push images to Docker Hub
@@ -192,9 +157,6 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           IMAGE_TAG: ${{ steps.version-tag.outputs.VERSION }}
         run: |
-          docker push $DOCKER_USERNAME/migration_mysql:latest
-          docker push $DOCKER_USERNAME/migration_mysql:$IMAGE_TAG
-
           docker push $DOCKER_USERNAME/api_python:latest
           docker push $DOCKER_USERNAME/api_python:$IMAGE_TAG
 
