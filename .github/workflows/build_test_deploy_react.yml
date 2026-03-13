@@ -119,8 +119,8 @@ jobs:
       - name: 🐳 Build and run Docker
         run: |
           docker compose up --build -d
-      - name: ⏳ Wait 10 seconds for services to initialize
-        run: sleep 10
+      - name: ⏳ Wait 3 seconds for services to initialize
+        run: sleep 3
       - name: ✅ Verify MySQL is running
         run: |
           if docker exec mysql-db mysqladmin ping -h 127.0.0.1 -uroot -p"$MYSQL_ROOT_PASSWORD" --silent > /dev/null 2>&1; then
