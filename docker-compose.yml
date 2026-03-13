@@ -6,15 +6,47 @@ services:
       - ./sqlfiles:/docker-entrypoint-initdb.d
       - ./db_data:/var/lib/mysql
 
-    restart: always
+    restart: "on-failure:3"
     environment:
       - MYSQL_ROOT_PASSWORD
     ports:
       - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   adminer:
     container_name: adminer
     image: adminer
-    restart: always
+    restart: "on-failure:3"
     ports:
       - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    container_name: api_python
+    image: api_python
+    build:
+      context: ./api
+    volumes:
+      - ./api:/app
+    restart: "on-failure:3"
+    healthcheck:
+      test: "curl -f http://localhost:8000/openapi.json"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE
+    ports:
+      - 8000:8000
+    depends_on:
+      db:
+        condition: service_healthy
