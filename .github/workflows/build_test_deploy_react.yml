@@ -222,14 +222,8 @@ jobs:
             echo "⚠️ Local version must be strictly greater than published version - skipping publish"
             echo "should_publish=false" >> $GITHUB_OUTPUT
           fi
-      - name: 🏗️ Build for npm
+      - name: 📦 Publish
         if: steps.version-check.outputs.should_publish == 'true'
         run: |
           pnpm build:npm
-          echo "=== git status ==="
-          git status --porcelain
-          echo "=== diff dist ==="
-          git diff -- dist || true
-      - name: 📦 Publish
-        if: steps.version-check.outputs.should_publish == 'true'
-        run: pnpm publish
+          pnpm publish
