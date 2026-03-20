@@ -11,7 +11,7 @@ describe("Navigation spec", () => {
 
   context("when no user is registered", () => {
     beforeEach(() => {
-      cy.intercept("GET", "/users", []);
+      cy.intercept("GET", "/users", { users: [] });
       cy.intercept("POST", "/users", {
         statusCode: 201,
         body: { ...person, id: 1 },
@@ -66,7 +66,7 @@ describe("Navigation spec", () => {
 
   context("when a user is already registered", () => {
     beforeEach(() => {
-      cy.intercept("GET", "/users", [person]);
+      cy.intercept("GET", "/users", { users: [person] });
     });
 
     it("should not navigate on error flow", () => {

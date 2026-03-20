@@ -15,7 +15,7 @@ describe("Home page spec", () => {
     ];
 
     beforeEach(() => {
-      cy.intercept("GET", "/users", users);
+      cy.intercept("GET", "/users", { users });
       cy.visit("/react-test-lab");
     });
 
@@ -74,7 +74,7 @@ describe("Home page spec", () => {
         { firstname: "Eve", lastname: "Davis", name: "Eve Davis" },
         { firstname: "Frank", lastname: "Miller", name: "Frank Miller" },
       ];
-      cy.intercept("GET", "/users", [...users, ...moreUsers]);
+      cy.intercept("GET", "/users", { users: [...users, ...moreUsers] });
       cy.visit("/react-test-lab");
 
       cy.get("[data-testid=users-list]").children().should("have.length", 5);

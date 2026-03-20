@@ -52,17 +52,19 @@ describe("App component", () => {
     });
 
     const data = {
-      data: [
-        {
-          name: "John Doe",
-          firstname: "John",
-          lastname: "Doe",
-          email: "john@example.com",
-          birth: "1990-01-01",
-          zipCode: "75010",
-          city: "",
-        },
-      ],
+      data: {
+        users: [
+          {
+            name: "John Doe",
+            firstname: "John",
+            lastname: "Doe",
+            email: "john@example.com",
+            birth: "1990-01-01",
+            zipCode: "75010",
+            city: "",
+          },
+        ],
+      },
     };
 
     axios.get.mockImplementation(() => Promise.resolve(data));
@@ -82,26 +84,28 @@ describe("App component", () => {
     });
 
     const data = {
-      data: [
-        {
-          name: "John Doe",
-          firstname: "John",
-          lastname: "Doe",
-          email: "john@example.com",
-          birth: "1990-01-01",
-          zipCode: "75010",
-          city: "",
-        },
-        {
-          name: "Jane Smith",
-          firstname: "Jane",
-          lastname: "Smith",
-          email: "jane@example.com",
-          birth: "1992-05-05",
-          zipCode: "75001",
-          city: "",
-        },
-      ],
+      data: {
+        users: [
+          {
+            name: "John Doe",
+            firstname: "John",
+            lastname: "Doe",
+            email: "john@example.com",
+            birth: "1990-01-01",
+            zipCode: "75010",
+            city: "",
+          },
+          {
+            name: "Jane Smith",
+            firstname: "Jane",
+            lastname: "Smith",
+            email: "jane@example.com",
+            birth: "1992-05-05",
+            zipCode: "75001",
+            city: "",
+          },
+        ],
+      },
     };
 
     axios.get.mockImplementationOnce(() => Promise.resolve(data));
@@ -243,7 +247,9 @@ describe("App component", () => {
       writable: true,
     });
 
-    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
     let rejectFn;
     axios.get.mockReturnValueOnce(

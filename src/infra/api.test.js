@@ -5,17 +5,19 @@ jest.mock("axios");
 describe("getAllUsers", () => {
   it("fetches successfully data from an API", async () => {
     const data = {
-      data: [
-        {
-          id: "1",
-          name: "John Doe",
-          email: "john.doe@mail.com",
-        },
-      ],
+      data: {
+        users: [
+          {
+            id: "1",
+            name: "John Doe",
+            email: "john.doe@mail.com",
+          },
+        ],
+      },
     };
 
     axios.get.mockImplementationOnce(() => Promise.resolve(data));
-    await expect(getAllUsers()).resolves.toEqual(data.data);
+    await expect(getAllUsers()).resolves.toEqual(data.data.users);
     expect(axios.get).toHaveBeenCalledWith(
       `${process.env.REACT_APP_API_URL}/users`,
     );

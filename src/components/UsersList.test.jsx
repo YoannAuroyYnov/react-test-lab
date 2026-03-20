@@ -18,7 +18,9 @@ beforeEach(() => {
 test("should display an empty list when no users in data response", async () => {
   const data = [];
 
-  axios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+  axios.get.mockImplementationOnce(() =>
+    Promise.resolve({ data: { users: data } }),
+  );
   const users = await getAllUsers();
   expect(users).toEqual(data);
 
@@ -46,8 +48,9 @@ test("should display users from api call on mount", async () => {
       zipCode: "69001",
     },
   ];
-
-  axios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+  axios.get.mockImplementationOnce(() =>
+    Promise.resolve({ data: { users: data } }),
+  );
   const users = await getAllUsers();
   expect(users).toEqual(data);
 
@@ -69,7 +72,9 @@ test("should display only the 5 most recent users when more than 5 exist", async
     zipCode: "75001",
   }));
 
-  axios.get.mockImplementationOnce(() => Promise.resolve({ data }));
+  axios.get.mockImplementationOnce(() =>
+    Promise.resolve({ data: { users: data } }),
+  );
   const users = await getAllUsers();
   expect(users).toEqual(data);
 
