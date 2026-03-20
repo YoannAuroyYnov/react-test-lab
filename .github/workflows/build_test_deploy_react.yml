@@ -43,12 +43,27 @@ jobs:
   test:
     name: 🧪 Test on Node.js 24.x
     runs-on: ubuntu-latest
-
+    env:
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+      MYSQL_USER: ${{ secrets.MYSQL_USER }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
     steps:
       - name: 👯‍♂️ Clone repository
         uses: actions/checkout@v4
       - name: Install Node.js 24.x and pnpm
         uses: ./.github/actions/install-node
+      - name: Start backend services
+        run: docker compose up -d db api
+      - name: Wait for API to be healthy
+        run: |
+          echo "Waiting for API to be healthy..."
+          until curl -sf http://localhost:8000/openapi.json > /dev/null; do
+            echo "API not ready yet, waiting 5 seconds..."
+            sleep 5
+          done
+          echo "API is healthy!"
       - name: 🧪 Integration Tests
         id: int-test
         run: pnpm test
