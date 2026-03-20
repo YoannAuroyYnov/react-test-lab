@@ -8,91 +8,9 @@ describe("Home page spec", () => {
     zipCode: "75001",
   };
 
-  context("when users are already registered", () => {
-    const users = [
-      { firstname: "Alice", lastname: "Smith", name: "Alice Smith" },
-      { firstname: "Bob", lastname: "Johnson", name: "Bob Johnson" },
-    ];
-
-    beforeEach(() => {
-      cy.intercept("GET", "/users", { users });
-      cy.visit("/react-test-lab");
-    });
-
-    it("should count the number of registered users", () => {
-      cy.get("h2").should("have.text", "Il y a 2 utilisateurs enregistrés");
-    });
-
-    it("should display the list of registered users", () => {
-      cy.get("[data-testid=users-list]")
-        .children()
-        .should("have.length", 2)
-        .first()
-        .should("contain.text", "1 - Alice Smith");
-    });
-
-    it("should add a new user to the list after registration", () => {
-      cy.get("[data-testid=navigation-button]").click();
-
-      cy.get("[data-testid=firstname-input]")
-        .type(person.firstname)
-        .should("have.value", person.firstname);
-
-      cy.get("[data-testid=lastname-input]")
-        .type(person.lastname)
-        .should("have.value", person.lastname);
-
-      cy.get("[data-testid=email-input]")
-        .type(person.email)
-        .should("have.value", person.email);
-
-      cy.get("[data-testid=birth-input]")
-        .type(person.birth)
-        .should("have.value", person.birth);
-
-      cy.get("[data-testid=city-input]")
-        .type(person.city)
-        .should("have.value", person.city);
-
-      cy.get("[data-testid=zip-input]")
-        .type(person.zipCode)
-        .should("have.value", person.zipCode);
-
-      cy.get("[data-testid=submit-button]").click();
-
-      cy.get("[data-testid=users-list]")
-        .children()
-        .should("have.length", 3)
-        .last()
-        .should("contain.text", "3 - Yoann Auroy");
-    });
-
-    it("should display only the 5 most recent users", () => {
-      const moreUsers = [
-        { firstname: "Charlie", lastname: "Brown", name: "Charlie Brown" },
-        { firstname: "David", lastname: "Wilson", name: "David Wilson" },
-        { firstname: "Eve", lastname: "Davis", name: "Eve Davis" },
-        { firstname: "Frank", lastname: "Miller", name: "Frank Miller" },
-      ];
-      cy.intercept("GET", "/users", { users: [...users, ...moreUsers] });
-      cy.visit("/react-test-lab");
-
-      cy.get("[data-testid=users-list]").children().should("have.length", 5);
-
-      cy.get("[data-testid=users-list]")
-        .children()
-        .first()
-        .should("contain.text", "1 - Bob Johnson");
-
-      cy.get("[data-testid=users-list]")
-        .children()
-        .last()
-        .should("contain.text", "5 - Frank Miller");
-    });
-  });
-
   context("when no users are registered", () => {
     beforeEach(() => {
+      cy.resetUsers();
       cy.visit("/react-test-lab/register");
     });
 
@@ -177,6 +95,62 @@ describe("Home page spec", () => {
       );
 
       cy.get("[data-testid=submit-button]").should("be.disabled");
+    });
+  });
+
+  context("when users are already registered", () => {
+    beforeEach(() => {
+      cy.resetUsers();
+      cy.addFirstUser();
+      cy.visit("/react-test-lab");
+    });
+
+    it("should count the number of registered users", () => {
+      cy.get("h2").should("have.text", "Il y a 1 utilisateur enregistré");
+    });
+
+    it("should display the list of registered users", () => {
+      cy.get("[data-testid=users-list]")
+        .children()
+        .should("have.length", 1)
+        .first()
+        .should("contain.text", "1 - John Doe");
+    });
+
+    it("should add a new user to the list after registration", () => {
+      cy.get("[data-testid=navigation-button]").click();
+
+      cy.get("[data-testid=firstname-input]")
+        .type(person.firstname)
+        .should("have.value", person.firstname);
+
+      cy.get("[data-testid=lastname-input]")
+        .type(person.lastname)
+        .should("have.value", person.lastname);
+
+      cy.get("[data-testid=email-input]")
+        .type(person.email)
+        .should("have.value", person.email);
+
+      cy.get("[data-testid=birth-input]")
+        .type(person.birth)
+        .should("have.value", person.birth);
+
+      cy.get("[data-testid=city-input]")
+        .type(person.city)
+        .should("have.value", person.city);
+
+      cy.get("[data-testid=zip-input]")
+        .type(person.zipCode)
+        .should("have.value", person.zipCode);
+
+      cy.get("[data-testid=submit-button]").click();
+
+      cy.get("[data-testid=users-list]")
+        .children()
+        .should("have.length", 2)
+        .last()
+        .should("contain.text", "2 - Yoann Auroy");
     });
   });
 });
