@@ -15,6 +15,7 @@
 
 # production
 /build
+/dist
 
 # data volumes
 /db_data

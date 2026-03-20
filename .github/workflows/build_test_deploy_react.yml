@@ -212,7 +212,7 @@ jobs:
         id: version-check
         run: |
           LOCAL_VERSION=$(cat package.json | jq -r '.version')
-          PUBLISHED_VERSION=$(npm view @yoann-86/react_test_lab version 2>/dev/null)
+          PUBLISHED_VERSION=$(pnpm view @yoann-86/react_test_lab version 2>/dev/null)
           echo "Local version: $LOCAL_VERSION"
           echo "Published version: $PUBLISHED_VERSION"
           if [[ $(printf '%s\n' "$PUBLISHED_VERSION" "$LOCAL_VERSION" | sort -V | tail -n1) == "$LOCAL_VERSION" ]] && [[ "$LOCAL_VERSION" != "$PUBLISHED_VERSION" ]]; then
@@ -222,8 +222,14 @@ jobs:
             echo "⚠️ Local version must be strictly greater than published version - skipping publish"
             echo "should_publish=false" >> $GITHUB_OUTPUT
           fi
-      - name: 📦 Publish
+      - name: 🏗️ Build for npm
         if: steps.version-check.outputs.should_publish == 'true'
         run: |
           pnpm build:npm
-          pnpm publish
+          echo "=== git status ==="
+          git status --porcelain
+          echo "=== diff dist ==="
+          git diff -- dist || true
+      - name: 📦 Publish
+        if: steps.version-check.outputs.should_publish == 'true'
+        run: pnpm publish
