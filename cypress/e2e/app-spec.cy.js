@@ -105,11 +105,8 @@ describe("Home page spec", () => {
       cy.visit("/react-test-lab");
     });
 
-    it("should count the number of registered users", () => {
-      cy.get("h2").should("have.text", "Il y a 1 utilisateur enregistré");
-    });
-
     it("should display the list of registered users", () => {
+      cy.get("h2").should("have.text", "Il y a 1 utilisateur enregistré");
       cy.get("[data-testid=users-list]")
         .children()
         .should("have.length", 1)

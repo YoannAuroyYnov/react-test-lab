@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-const baseApiUrl = Cypress.env("API_URL");
+const baseApiUrl = "http://localhost:8000";
 
 Cypress.Commands.add("resetUsers", () => {
   cy.request("GET", `${baseApiUrl}/users`)
