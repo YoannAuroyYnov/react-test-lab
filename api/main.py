@@ -60,3 +60,34 @@ async def create_user(user: UserCreate):
   except mysql.connector.Error as error:
     conn.rollback()
     raise HTTPException(status_code=400, detail=str(error))
+
+@app.put("/users/{user_id}")
+async def update_user(user_id: int, user: UserCreate):
+  cursor = conn.cursor(dictionary=True)
+  try:
+    cursor.execute(
+      "UPDATE users SET name = %s, email = %s WHERE id = %s",
+      (user.name, user.email, user_id),
+    )
+    conn.commit()
+    if cursor.rowcount == 0:
+      raise HTTPException(status_code=404, detail="User not found")
+
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+    updated_user = cursor.fetchone()
+    return updated_user
+  except mysql.connector.Error as error:
+    conn.rollback()
+    raise HTTPException(status_code=400, detail=str(error))
+
+@app.delete("/users/{user_id}", status_code=204)
+async def delete_user(user_id: int):
+  cursor = conn.cursor(dictionary=True)
+  try:
+    cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+    conn.commit()
+    if cursor.rowcount == 0:
+      raise HTTPException(status_code=404, detail="User not found")
+  except mysql.connector.Error as error:
+    conn.rollback()
+    raise HTTPException(status_code=400, detail=str(error))
