@@ -1,7 +1,8 @@
 import mysql.connector
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 app = FastAPI()
 origins = ["*"]
@@ -22,6 +23,16 @@ conn = mysql.connector.connect(
   host=os.getenv("MYSQL_HOST")
 )
 
+
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    firstname: str | None = None
+    lastname: str | None = None
+    birth: str | None = None
+    city: str | None = None
+    zipCode: str | None = None
+
 @app.get("/users")
 async def get_users():
     cursor = conn.cursor(dictionary=True)
@@ -30,3 +41,22 @@ async def get_users():
     records = cursor.fetchall()
     print("Total number of rows in users is: ", cursor.rowcount)
     return {"users": records}
+
+
+@app.post("/users", status_code=201)
+async def create_user(user: UserCreate):
+  cursor = conn.cursor(dictionary=True)
+  try:
+    cursor.execute(
+      "INSERT INTO users (name, email) VALUES (%s, %s)",
+      (user.name, user.email),
+    )
+    conn.commit()
+
+    created_id = cursor.lastrowid
+    cursor.execute("SELECT * FROM users WHERE id = %s", (created_id,))
+    created_user = cursor.fetchone()
+    return created_user
+  except mysql.connector.Error as error:
+    conn.rollback()
+    raise HTTPException(status_code=400, detail=str(error))
