@@ -39,7 +39,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: build
-
   test:
     name: 🧪 Test on Node.js 24.x
     runs-on: ubuntu-latest
@@ -97,7 +96,6 @@ jobs:
           else
             echo "❌ End-to-End Tests failed"
           fi
-
   docker-build-and-run:
     name: 🐳 Build and Run Docker Containers
     runs-on: ubuntu-latest
@@ -140,6 +138,15 @@ jobs:
             exit 1
           fi
           echo "✅ API is running with $USERS_COUNT user(s)"
+      - name: ✅ Verify Web is running
+        run: |
+          HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000)
+          if [[ "$HTTP_STATUS" -eq 200 ]]; then
+            echo "✅ Web application is running status code: $HTTP_STATUS"
+          else
+            echo "❌ Web application is not running status code: $HTTP_STATUS"
+            exit 1
+          fi
       - name: 🔐 Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -159,7 +166,6 @@ jobs:
         run: |
           docker push $DOCKER_USERNAME/api_python:latest
           docker push $DOCKER_USERNAME/api_python:$IMAGE_TAG
-
   deploy:
     name: 🚀 Deploy to GitHub Pages
     environment:
@@ -174,7 +180,6 @@ jobs:
       - name: 🚀 Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
   publish:
     name: 📦 Publish to npm
     runs-on: ubuntu-latest
