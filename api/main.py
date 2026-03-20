@@ -24,7 +24,7 @@ conn = mysql.connector.connect(
 
 @app.get("/users")
 async def get_users():
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     sql_select_query = "SELECT * from users"
     cursor.execute(sql_select_query)
     records = cursor.fetchall()

@@ -5,7 +5,7 @@ const API = process.env.REACT_APP_API_URL;
 export const getAllUsers = async () => {
   try {
     const response = await axios.get(`${API}/users`);
-    return response.data;
+    return response.data.users;
   } catch (error) {
     throw error;
   }
