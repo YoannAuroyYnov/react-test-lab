@@ -18,6 +18,8 @@
   "scripts": {
     "adduser": "login",
     "cypress": "cypress open",
+    "cypress:omit:critical": "npx cypress run --expose grepTags='-@critical',grepOmitFiltered=true",
+    "cypress:run:critical": "npx cypress run --expose grepTags='@critical',grepFilterSpecs=true,grepOmitFiltered=true",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "build:npm": "NODE_ENV=production && rm -rf dist && mkdir dist && npx babel src --out-dir dist --copy-files",
@@ -47,6 +49,7 @@
     "@babel/cli": "^7.28.6",
     "@babel/core": "^7.29.0",
     "@babel/plugin-transform-react-jsx": "^7.28.6",
+    "@cypress/grep": "^6.0.0",
     "cypress": "^15.10.0",
     "jsdoc": "^4.0.5",
     "react-test-renderer": "^19.2.4"

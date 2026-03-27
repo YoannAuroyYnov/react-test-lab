@@ -150,4 +150,21 @@ describe("Home page spec", () => {
         .should("contain.text", "2 - Yoann Auroy");
     });
   });
+
+  context("when API is down", { tags: "@critical" }, () => {
+    it("should display an error alert", () => {
+      cy.visit("/react-test-lab", {
+        onBeforeLoad: (win) => {
+          cy.stub(win, "alert").as("errorAlert");
+        },
+      });
+
+      cy.get("@errorAlert").should(
+        "have.been.calledWith",
+        "Une erreur est survenue lors du chargement des utilisateurs. Veuillez réessayer.",
+      );
+
+      cy.get("h2").should("have.text", "Il n'y a aucun utilisateur enregistré");
+    });
+  });
 });

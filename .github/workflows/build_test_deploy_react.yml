@@ -80,9 +80,9 @@ jobs:
         uses: actions/checkout@v4
       - name: Install Node.js 24.x and pnpm
         uses: ./.github/actions/install-node
-      - name: Start services
+      - name: 🚀 Start services
         run: docker compose up -d
-      - name: Wait for API to be healthy
+      - name: ⏳ Wait for API to be healthy
         run: |
           echo "Waiting for API to be healthy..."
           until curl -sf http://localhost:8000/openapi.json > /dev/null; do
@@ -90,22 +90,21 @@ jobs:
             sleep 5
           done
           echo "API is healthy!"
-      - name: 🔨 Build for E2E
-        run: PUBLIC_URL=/ pnpm run build
       - name: 📦 Install Cypress binary manually
         run: pnpm exec cypress install
-      - name: 🎭 Run e2e tests with Cypress
+      - name: 🎭 Run e2e happy path tests
         id: e2e-test
-        uses: cypress-io/github-action@v6
-        with:
-          install: false
-          start: npx serve -s build -l 3000
-          wait-on: "http://localhost:3000"
+        run: pnpm cypress:omit:critical
+      - name: 🛑 Stop API to test critical scenarios
+        run: docker compose stop api
+      - name: 🎭 Run critical e2e tests with downed API
+        id: e2e-critical-test
+        run: pnpm cypress:run:critical
       - name: 🗒️ E2E Test report
         if: always()
         run: |
           echo "Node.js version: $(node -v)"
-          if [[ ${{ steps.e2e-test.outcome }} == "success" ]]; then
+          if [[ ${{ steps.e2e-test.outcome }} == "success" && ${{ steps.e2e-critical-test.outcome }} == "success" ]]; then
             echo "✅ End-to-End Tests passed"
           else
             echo "❌ End-to-End Tests failed"

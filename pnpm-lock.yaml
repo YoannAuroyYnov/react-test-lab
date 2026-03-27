@@ -48,6 +48,9 @@ importers:
       '@babel/plugin-transform-react-jsx':
         specifier: ^7.28.6
         version: 7.28.6(@babel/core@7.29.0)
+      '@cypress/grep':
+        specifier: ^6.0.0
+        version: 6.0.0(@babel/core@7.29.0)(cypress@15.10.0)
       cypress:
         specifier: ^15.10.0
         version: 15.10.0
@@ -883,6 +886,11 @@ packages:
     peerDependencies:
       postcss-selector-parser: ^6.0.10
 
+  '@cypress/grep@6.0.0':
+    resolution: {integrity: sha512-n3PCeqt8OwmLFz310igbRUm3qDE5WJgM9LW+2ejdULfMu2Sudqg3UX8koC8/JU/+ZcJ5UbaQAap1Nbi0QvzXwA==}
+    peerDependencies:
+      cypress: '>=15.10.0'
+
   '@cypress/request@3.0.10':
     resolution: {integrity: sha512-hauBrOdvu08vOsagkZ/Aju5XuiZx6ldsLfByg1htFeldhex+PeMrYauANzFsMJeAA0+dyPLbDoX2OYuvVoLDkQ==}
     engines: {node: '>= 6'}
@@ -1515,6 +1523,10 @@ packages:
 
   acorn-walk@7.2.0:
     resolution: {integrity: sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA==}
+    engines: {node: '>=0.4.0'}
+
+  acorn-walk@8.3.5:
+    resolution: {integrity: sha512-HEHNfbars9v4pgpW6SO1KSPkfoS0xVOM/9UzkJltjlsHZmJasxg8aXkuZa7SMf8vKGIBhpUsPluQSqhJFCqebw==}
     engines: {node: '>=0.4.0'}
 
   acorn@7.4.1:
@@ -2847,6 +2859,10 @@ packages:
   find-cache-dir@3.3.2:
     resolution: {integrity: sha512-wXZV5emFEjrridIgED11OoUKLxiYjAcqot/NJdAkOhlJ+vGzwhOAfcG5OX1jP+S0PcjEn8bdMJv+g2jwQ3Onig==}
     engines: {node: '>=8'}
+
+  find-test-names@1.29.19:
+    resolution: {integrity: sha512-fSO2GXgOU6dH+FdffmRXYN/kLdnd8zkBGIZrKsmAdfLSFUUDLpDFF7+F/h+wjmjDWQmMgD8hPfJZR+igiEUQHQ==}
+    hasBin: true
 
   find-up@3.0.0:
     resolution: {integrity: sha512-1yD6RmLI1XBfxugvORwlck6f75tYL+iR0jqwsOrOxMZyGYqUuDhJ0l4AXdO1iX/FTs9cBAMEk1gWSEx1kSbylg==}
@@ -5123,6 +5139,10 @@ packages:
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
 
+  simple-bin-help@1.8.0:
+    resolution: {integrity: sha512-0LxHn+P1lF5r2WwVB/za3hLRIsYoLaNq1CXqjbrs3ZvLuvlWnRKrUjEWzV7umZL7hpQ7xULiQMV+0iXdRa5iFg==}
+    engines: {node: '>=14.16'}
+
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
 
@@ -6931,6 +6951,16 @@ snapshots:
     dependencies:
       postcss-selector-parser: 6.1.2
 
+  '@cypress/grep@6.0.0(@babel/core@7.29.0)(cypress@15.10.0)':
+    dependencies:
+      cypress: 15.10.0
+      debug: 4.4.3(supports-color@8.1.1)
+      find-test-names: 1.29.19(@babel/core@7.29.0)
+      globby: 11.1.0
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
+
   '@cypress/request@3.0.10':
     dependencies:
       aws-sign2: 0.7.0
@@ -7794,6 +7824,10 @@ snapshots:
       acorn: 8.15.0
 
   acorn-walk@7.2.0: {}
+
+  acorn-walk@8.3.5:
+    dependencies:
+      acorn: 8.15.0
 
   acorn@7.4.1: {}
 
@@ -9417,6 +9451,18 @@ snapshots:
       commondir: 1.0.1
       make-dir: 3.1.0
       pkg-dir: 4.2.0
+
+  find-test-names@1.29.19(@babel/core@7.29.0):
+    dependencies:
+      '@babel/parser': 7.29.0
+      '@babel/plugin-syntax-jsx': 7.28.6(@babel/core@7.29.0)
+      acorn-walk: 8.3.5
+      debug: 4.4.3(supports-color@8.1.1)
+      simple-bin-help: 1.8.0
+      tinyglobby: 0.2.15
+    transitivePeerDependencies:
+      - '@babel/core'
+      - supports-color
 
   find-up@3.0.0:
     dependencies:
@@ -12072,6 +12118,8 @@ snapshots:
       side-channel-weakmap: 1.0.2
 
   signal-exit@3.0.7: {}
+
+  simple-bin-help@1.8.0: {}
 
   sisteransi@1.0.5: {}
 
