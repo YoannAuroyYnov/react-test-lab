@@ -70,6 +70,15 @@ describe("Home page spec", () => {
         "Les caractères spéciaux sont interdits",
       );
 
+      cy.get("[data-testid=lastname-input]")
+        .clear()
+        .type('<img src="x" onerror="alert(\'XSS\')">')
+        .should("have.value", '<img src="x" onerror="alert(\'XSS\')">');
+      cy.get("[data-testid=lastname-error-text]").should(
+        "have.text",
+        "Les caractères spéciaux sont interdits",
+      );
+
       cy.get("[data-testid=email-input]")
         .type("yoann.invalid_email.com")
         .should("have.value", "yoann.invalid_email.com");
