@@ -12,7 +12,9 @@ services:
     ports:
       - 3306:3306
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test:
+        - CMD-SHELL
+        - mysql -uroot -p"$$MYSQL_ROOT_PASSWORD" -D ynov_ci -Nse "SELECT COUNT(*) FROM users WHERE email='john@example.com';" | grep -q '^1$'
       interval: 10s
       timeout: 5s
       retries: 5
